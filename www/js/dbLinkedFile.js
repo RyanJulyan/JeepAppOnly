@@ -7,12 +7,13 @@
 	  var user_submission_num = 1;
 	  var cur_user_id = 0;
 	  var data_pri = 1;
+	  var AllUsers = [];
 	  
 	  // For Server
 	  var url_extention = "http://jeep.mi-project.info/include/";
 	  
 	  //For Local
-	  //var url_extention = "include/";
+	 // var url_extention = "include/";
 	  
 	  var adminID = 0;
 	  var loggedAdminName = null;
@@ -386,6 +387,14 @@
         });
       }
 	  
+	  jeep.webdb.getAllUsers = function(renderFunc) {
+        var db = jeep.webdb.db;
+        db.transaction(function(tx) {		  
+          tx.executeSql("SELECT * FROM `user`", [], renderFunc,
+              jeep.webdb.onError);
+        });
+      }
+	  
 	  jeep.webdb.getAllCapData = function(renderFunc) {
         var db = jeep.webdb.db;
         db.transaction(function(tx) {
@@ -426,7 +435,7 @@
 		  
 		  var project_id = $('#projID').val();
 		  
-          tx.executeSql("SELECT proj_input.id AS id, label, required, input_name, data_type FROM `proj_input` INNER JOIN `input_info` ON proj_input.input_info_id = input_info.id INNER JOIN `data_type` ON input_info.data_type_id = data_type.id WHERE project_id=? ORDER BY input_name;", [project_id], renderFunc,
+          tx.executeSql("SELECT proj_input.id AS id, label, required, input_name, data_type FROM `proj_input` INNER JOIN `input_info` ON proj_input.input_info_id = input_info.id INNER JOIN `data_type` ON input_info.data_type_id = data_type.id WHERE project_id=? ORDER BY  proj_input.id;", [project_id], renderFunc,
               jeep.webdb.onError);
         });
       }
@@ -487,6 +496,16 @@
         }
 		$("#curuserid").val(rowOutput);
 		cur_user_id = rowOutput;
+      }
+	  
+	  function loadAllUsers(tx, rs) {
+        var rowOutput = [];
+        for (var i=0; i < rs.rows.length; i++) {
+          rowOutput.push(renderAllUsers(rs.rows.item(i)));
+        }
+		$("#curuserid").val(rowOutput);
+		AllUsers = rowOutput;
+		console.log(AllUsers);
       }
       
       function loadprojectItems(tx, rs) {
@@ -667,6 +686,10 @@
 	  
 	  function renderCurUserId(row) {
         return row.id;
+      }
+	  
+	   function renderAllUsers(row) {
+        return [row.id, row.name, row.date_time_in, row.cur_lat, row.cur_long, row.date_time_out];
       }
 	  
 	  function renderCurAdminId(row) {
@@ -1315,6 +1338,11 @@
 		
 		jeep.webdb.addProjectDataCapture(proj_input_id, user_id, userSubnum, project_id, val, cur_lat, cur_long);
       }
+	  
+	  function getAllUsers(){
+		  jeep.webdb.open();
+		  jeep.webdb.getAllUsers(loadAllUsers);
+	  }
 	  
 	  function updateUserSubMission(){
 		
