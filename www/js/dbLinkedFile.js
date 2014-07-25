@@ -1370,6 +1370,15 @@
 				else if(elements[i].getAttribute("type") == "text"){
 					elements[i].value = '';
 				}
+				else if(elements[i].getAttribute("type") == "tel"){
+					elements[i].value = '';
+				}
+				else if(elements[i].getAttribute("type") == "email"){
+					elements[i].value = '';
+				}
+				else if(elements[i].getAttribute("type") == "number"){
+					elements[i].value = '';
+				}
 			}
 		}
 	  }
