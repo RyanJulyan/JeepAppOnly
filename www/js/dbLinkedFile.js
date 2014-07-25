@@ -610,6 +610,7 @@
       }
 	  
 	  function loadAllCapData(tx, rs) {
+		alert("In Data Capture");
 		var lastsub = 0;
 		var lastuserid = 0;
 		var lasttitle = [];
