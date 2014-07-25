@@ -399,7 +399,6 @@
         var db = jeep.webdb.db;
         db.transaction(function(tx) {
 		  var project_id = $('#projID').val();
-		  project_id = 1;
           tx.executeSql("SELECT * FROM `project_data_capture` INNER JOIN `proj_input` ON proj_input.id = project_data_capture.proj_input_id INNER JOIN `input_info` ON input_info.id = proj_input.input_info_id WHERE project_data_capture.project_id = ? ORDER BY `project_data_capture`.`user_submission_num` ASC", [project_id], renderFunc,
               jeep.webdb.onError);
         });
