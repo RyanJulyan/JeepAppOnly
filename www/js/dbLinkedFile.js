@@ -642,6 +642,7 @@
 		  }
         }
         rowOutput += "</tr></tbody>";
+		//$("#render_data").html('').append(rowOutput).trigger('create');
 		$("#render_data").html('').append(rowOutput).trigger('create');
       }
 	  
