@@ -610,7 +610,6 @@
       }
 	  
 	  function loadAllCapData(tx, rs) {
-		alert('In Load Data cap');
 		var lastsub = 0;
 		var lastuserid = 0;
 		var lasttitle = [];
@@ -627,7 +626,7 @@
         }
 		
 		rowOutput += "</tr></thead><tbody><tr>";
-		
+		alert(rows.length);
         for (var j=0; j < rs.rows.length; j++) {
 		
 		  if(lastsub == rs.rows.item(j).user_submission_num && lastuserid == rs.rows.item(j).user_id){
