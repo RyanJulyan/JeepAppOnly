@@ -524,96 +524,6 @@
 		$("#curuserid").val(rowOutput);
 		cur_user_id = rowOutput;
       }
-	  
-	  function loadAllUsers(tx, rs) {
-        var rowOutput = [];
-        for (var i=0; i < rs.rows.length; i++) {
-          rowOutput.push(renderAllUsers(rs.rows.item(i)));
-        }
-		
-		AllUsers = JSON.stringify(rowOutput);
-		console.log(AllUsers);
-		
-		var formdata = new FormData();
-		
-		formdata.append("AllUsers", AllUsers);
-		
-		console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_users.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				console.log(data);
-				//alert("Users Uploaded to Server");
-				
-				$('#User_Sync').html('').append('Users Have Synced').trigger('create');
-			},
-			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-			}
-		});
-		
-      }
-	  
-	  function loadAllUsersDataCap(tx, rs) {
-        var rowOutput = [];
-        for (var i=0; i < rs.rows.length; i++) {
-          rowOutput.push(renderAllUsersDataCap(rs.rows.item(i)));
-		  console.log(rs.rows.item[0]);
-        }
-		
-		AllUsersDataCap = JSON.stringify(rowOutput);
-		console.log(AllUsersDataCap);
-		
-		var formdata = new FormData();
-		
-		formdata.append("AllUsersDataCap", AllUsersDataCap);
-		
-		console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_data_cap.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				console.log(data);
-				//alert("Captured Data Uploaded to Server")
-				$('#Data_Sync').html('').append('Captured Data Has Synced').trigger('create');
-				/*
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE user", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS user('id' INTEGER PRIMARY KEY ASC, 'name' VARCHAR(255), 'date_time_in' DATETIME, 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_out' DATETIME)", []);
-					tx.executeSql("DROP TABLE project_data_capture", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS project_data_capture('id' INTEGER PRIMARY KEY ASC, 'proj_input_id' INTEGER, 'user_id' INTEGER, 'user_submission_num' INTEGER, 'project_id' INTEGER, 'value' VARCHAR(255), 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_created' DATETIME)", []);
-				});
-				*/
-				
-			},
-			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-			}
-		});
-		
-		
-		
-      }
       
       function loadprojectItems(tx, rs) {
 	  
@@ -1630,6 +1540,7 @@
 		});
 		$(document).on("pageshow",function(){
 			console.log("Go goUserDataSyncFired");
+			initDB();
 			getAllUsers();
 			getAllUserDataCap();
 		});
@@ -2036,8 +1947,6 @@
 			}
 		});
 		
-		
-		
 	  }
 	  
 	   function setServDataType(){
@@ -2161,3 +2070,93 @@
 		
 		
 	  }
+	  
+	  function loadAllUsers(tx, rs) {
+        var rowOutput = [];
+        for (var i=0; i < rs.rows.length; i++) {
+          rowOutput.push(renderAllUsers(rs.rows.item(i)));
+        }
+		
+		AllUsers = JSON.stringify(rowOutput);
+		console.log(AllUsers);
+		
+		var formdata = new FormData();
+		
+		formdata.append("AllUsers", AllUsers);
+		
+		console.log(formdata);
+		
+		$.ajax({
+			async: false,
+			type: "POST",
+			data:formdata,
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"set_users.php",
+			processData: false, // Don't process the files
+			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data, textStatus, jqXHR){
+				console.log(data);
+				//alert("Users Uploaded to Server");
+				
+				$('#User_Sync').html('').append('Users Have Synced').trigger('create');
+			},
+			error:function(xhr){
+				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+      }
+	  
+	  function loadAllUsersDataCap(tx, rs) {
+        var rowOutput = [];
+        for (var i=0; i < rs.rows.length; i++) {
+          rowOutput.push(renderAllUsersDataCap(rs.rows.item(i)));
+		  console.log(rs.rows.item[0]);
+        }
+		
+		AllUsersDataCap = JSON.stringify(rowOutput);
+		console.log(AllUsersDataCap);
+		
+		var formdata = new FormData();
+		
+		formdata.append("AllUsersDataCap", AllUsersDataCap);
+		
+		console.log(formdata);
+		
+		$.ajax({
+			async: false,
+			type: "POST",
+			data:formdata,
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"set_data_cap.php",
+			processData: false, // Don't process the files
+			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data, textStatus, jqXHR){
+				console.log(data);
+				//alert("Captured Data Uploaded to Server")
+				$('#Data_Sync').html('').append('Captured Data Has Synced').trigger('create');
+				/*
+				jeep.webdb.open();
+				jeep.webdb.db.transaction(function(tx) {
+					tx.executeSql("DROP TABLE user", []);
+					tx.executeSql("CREATE TABLE IF NOT EXISTS user('id' INTEGER PRIMARY KEY ASC, 'name' VARCHAR(255), 'date_time_in' DATETIME, 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_out' DATETIME)", []);
+					tx.executeSql("DROP TABLE project_data_capture", []);
+					tx.executeSql("CREATE TABLE IF NOT EXISTS project_data_capture('id' INTEGER PRIMARY KEY ASC, 'proj_input_id' INTEGER, 'user_id' INTEGER, 'user_submission_num' INTEGER, 'project_id' INTEGER, 'value' VARCHAR(255), 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_created' DATETIME)", []);
+				});
+				*/
+				
+			},
+			error:function(xhr){
+				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+		
+		
+      }
