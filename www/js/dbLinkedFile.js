@@ -594,7 +594,7 @@
 			success: function(data, textStatus, jqXHR){
 				console.log(data);
 				//alert("Captured Data Uploaded to Server")
-				$('#Data_Sync').html('').append("Data Synced").trigger('create');
+				$('#Data_Sync').html('').append('Captured Data Has Synced').trigger('create');
 				/*
 				jeep.webdb.open();
 				jeep.webdb.db.transaction(function(tx) {
@@ -1484,6 +1484,9 @@
 					$( "#"+elements[i].id ).prop( "checked", false ).checkboxradio("refresh");
 				}
 				else if(elements[i].getAttribute("type") == "text"){
+					elements[i].value = '';
+				}
+				else{
 					elements[i].value = '';
 				}
 			}
