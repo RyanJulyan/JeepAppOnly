@@ -552,8 +552,8 @@
 			beforeSend : function() {$.mobile.loading('show')},
     		complete   : function() {$.mobile.loading('hide')},
 			success: function(data, textStatus, jqXHR){
-				//console.log(data, textStatus, jqXHR);
-				//alert("Uploaded to Server")
+				console.log(data);
+				//alert("Users Uploaded to Server");
 				
 				$('#User_Sync').html('').append('Users Have Synced').trigger('create');
 			},
@@ -592,11 +592,10 @@
 			beforeSend : function() {$.mobile.loading('show')},
     		complete   : function() {$.mobile.loading('hide')},
 			success: function(data, textStatus, jqXHR){
-				//console.log(data, textStatus, jqXHR);
-				//alert("Uploaded to Server")
-				
-				$('#Data_Sync').html('').append('Captured Data Has Synced').trigger('create');
-				
+				console.log(data);
+				//alert("Captured Data Uploaded to Server")
+				$('#Data_Sync').html('').append("Data Synced").trigger('create');
+				/*
 				jeep.webdb.open();
 				jeep.webdb.db.transaction(function(tx) {
 					tx.executeSql("DROP TABLE user", []);
@@ -604,6 +603,7 @@
 					tx.executeSql("DROP TABLE project_data_capture", []);
 					tx.executeSql("CREATE TABLE IF NOT EXISTS project_data_capture('id' INTEGER PRIMARY KEY ASC, 'proj_input_id' INTEGER, 'user_id' INTEGER, 'user_submission_num' INTEGER, 'project_id' INTEGER, 'value' VARCHAR(255), 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_created' DATETIME)", []);
 				});
+				*/
 				
 			},
 			error:function(xhr){
@@ -1484,9 +1484,6 @@
 					$( "#"+elements[i].id ).prop( "checked", false ).checkboxradio("refresh");
 				}
 				else if(elements[i].getAttribute("type") == "text"){
-					elements[i].value = '';
-				}
-				else{
 					elements[i].value = '';
 				}
 			}
