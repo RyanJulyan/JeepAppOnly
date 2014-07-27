@@ -427,7 +427,7 @@
         db.transaction(function(tx) {
 		  var project_id = $('#projID').val();
 			  //tx.executeSql("CREATE TEMPORARY TABLE IF NOT EXISTS user_submission_num AS (SELECT DISTINCT `project_data_capture`.`user_submission_num` FROM `project_data_capture` WHERE `project_data_capture`.`project_id` = 1); SELECT * FROM user_submission_num CROSS JOIN `proj_input` INNER JOIN `input_info` ON `input_info`.`id` = `proj_input`.`input_info_id` LEFT JOIN `project_data_capture` ON `project_data_capture`.`proj_input_id` = `proj_input`.`id` ORDER BY user_submission_num.user_submission_num ;", [project_id], renderFunc, jeep.webdb.onError);
-			  tx.executeSql("SELECT DISTINCT `project_data_capture`.`user_submission_num` FROM `project_data_capture` CROSS JOIN `proj_input` INNER JOIN `input_info` ON `input_info`.`id` = `proj_input`.`input_info_id` LEFT JOIN `project_data_capture` ON `project_data_capture`.`proj_input_id` = `proj_input`.`id` ORDER BY user_submission_num.user_submission_num AND `project_data_capture`.`project_id` = 1 ;", [], renderFunc,
+			  tx.executeSql("SELECT * FROM project_data_capture;", [], renderFunc,
               jeep.webdb.onError);
         });
       }
