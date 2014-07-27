@@ -11,10 +11,10 @@
 	  var AllUsersDataCap = [];
 	  
 	  // For Server
-	  var url_extention = "http://jeep.mi-project.info/apponly/include/";
+	  //var url_extention = "http://jeep.mi-project.info/include/";
 	  
 	  //For Local
-	  //var url_extention = "include/";
+	  var url_extention = "include/";
 	  
 	  var adminID = 0;
 	  var loggedAdminName = null;
@@ -426,8 +426,7 @@
         var db = jeep.webdb.db;
         db.transaction(function(tx) {
 		  var project_id = $('#projID').val();
-			  //tx.executeSql("CREATE TEMPORARY TABLE IF NOT EXISTS user_submission_num AS (SELECT DISTINCT `project_data_capture`.`user_submission_num` FROM `project_data_capture` WHERE `project_data_capture`.`project_id` = 1); SELECT * FROM user_submission_num CROSS JOIN `proj_input` INNER JOIN `input_info` ON `input_info`.`id` = `proj_input`.`input_info_id` LEFT JOIN `project_data_capture` ON `project_data_capture`.`proj_input_id` = `proj_input`.`id` ORDER BY user_submission_num.user_submission_num ;", [project_id], renderFunc, jeep.webdb.onError);
-			  tx.executeSql("SELECT * FROM project_data_capture;", [], renderFunc,
+			  tx.executeSql("SELECT DISTINCT `Tet`.`user_submission_num`, `Tet`.`user_id`, `input_name`, `value`, `cur_lat`, `cur_long`, `date_time_created` FROM (SELECT DISTINCT `project_data_capture`.`user_submission_num`, `project_data_capture`.`user_id` FROM `project_data_capture`) AS Tet CROSS JOIN `proj_input` INNER JOIN `input_info` ON `input_info`.`id` = `proj_input`.`input_info_id` LEFT JOIN `project_data_capture` ON `project_data_capture`.`proj_input_id` = `proj_input`.`id` AND `Tet`.`user_id` = `project_data_capture`.`user_id` WHERE `project_data_capture`.`project_id` = 1  OR `project_data_capture`.`project_id` IS NULL ORDER BY 1,2, value ASC", [], renderFunc,
               jeep.webdb.onError);
         });
       }
@@ -627,7 +626,7 @@
       }
 	  
 	  function loadAllCapData(tx, rs) {
-		alert("Loading All Data Cap");
+		//alert("Loading All Data Cap");
 		
 		var lastsub = 0;
 		var lastuserid = 0;
@@ -2192,7 +2191,7 @@
 				//console.log(data);
 				//alert("Captured Data Uploaded to Server")
 				$('#Data_Sync').html('').append('Captured Data Has Synced').trigger('create');
-				/*
+				
 				jeep.webdb.open();
 				jeep.webdb.db.transaction(function(tx) {
 					tx.executeSql("DROP TABLE user", []);
@@ -2200,7 +2199,7 @@
 					tx.executeSql("DROP TABLE project_data_capture", []);
 					tx.executeSql("CREATE TABLE IF NOT EXISTS project_data_capture('id' INTEGER PRIMARY KEY ASC, 'proj_input_id' INTEGER, 'user_id' INTEGER, 'user_submission_num' INTEGER, 'project_id' INTEGER, 'value' VARCHAR(255), 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_created' DATETIME)", []);
 				});
-				*/
+				
 				
 			},
 			error:function(xhr){
