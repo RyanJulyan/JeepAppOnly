@@ -14,11 +14,7 @@
 	  //var url_extention = "http://jeep.mi-project.info/include/";
 	  
 	  //For Local
-<<<<<<< HEAD
 	  var url_extention = "include/";
-=======
-	  //var url_extention = "include/";
->>>>>>> origin/master
 	  
 	  var adminID = 0;
 	  var loggedAdminName = null;
@@ -1588,21 +1584,11 @@
 		var url = "user_sync.html";
 		$.mobile.changePage(url,{ transition: "flip"});
 		$(document).on("pagecontainerload",function(event,data){
-<<<<<<< HEAD
 			uploadData();
 		});
 		$(document).on("pageshow",function(){
 			console.log("Go goUserDataSyncFired");
 			jeep.webdb.open();
-=======
-			
-		});
-		$(document).on("pageshow",function(){
-			console.log("Go goUserDataSyncFired");
-			initDB();
-			getAllUsers();
-			getAllUserDataCap();
->>>>>>> origin/master
 		});
 	  }
 	  
@@ -2132,33 +2118,21 @@
 	  }
 	  
 	  function loadAllUsers(tx, rs) {
-<<<<<<< HEAD
 		alert('load Users');
-=======
->>>>>>> origin/master
         var rowOutput = [];
         for (var i=0; i < rs.rows.length; i++) {
           rowOutput.push(renderAllUsers(rs.rows.item(i)));
         }
 		
-<<<<<<< HEAD
 		//AllUsers = JSON.stringify(rowOutput);
 		AllUsers = rowOutput;
 		//console.log(AllUsers);
-=======
-		AllUsers = JSON.stringify(rowOutput);
-		console.log(AllUsers);
->>>>>>> origin/master
 		
 		var formdata = new FormData();
 		
 		formdata.append("AllUsers", AllUsers);
 		
-<<<<<<< HEAD
 		//console.log(formdata);
-=======
-		console.log(formdata);
->>>>>>> origin/master
 		
 		$.ajax({
 			async: false,
@@ -2191,24 +2165,15 @@
 		  console.log(rs.rows.item[0]);
         }
 		
-<<<<<<< HEAD
 		//AllUsersDataCap = JSON.stringify(rowOutput);
 		AllUsersDataCap = rowOutput;
 		//console.log(AllUsersDataCap);
-=======
-		AllUsersDataCap = JSON.stringify(rowOutput);
-		console.log(AllUsersDataCap);
->>>>>>> origin/master
 		
 		var formdata = new FormData();
 		
 		formdata.append("AllUsersDataCap", AllUsersDataCap);
 		
-<<<<<<< HEAD
 		//console.log(formdata);
-=======
-		console.log(formdata);
->>>>>>> origin/master
 		
 		$.ajax({
 			async: false,
@@ -2222,11 +2187,7 @@
 			beforeSend : function() {$.mobile.loading('show')},
     		complete   : function() {$.mobile.loading('hide')},
 			success: function(data, textStatus, jqXHR){
-<<<<<<< HEAD
 				//console.log(data);
-=======
-				console.log(data);
->>>>>>> origin/master
 				//alert("Captured Data Uploaded to Server")
 				$('#Data_Sync').html('').append('Captured Data Has Synced').trigger('create');
 				/*
