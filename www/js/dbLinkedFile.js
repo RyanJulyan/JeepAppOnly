@@ -426,7 +426,8 @@
         var db = jeep.webdb.db;
         db.transaction(function(tx) {
 		  var project_id = $('#projID').val();
-          tx.executeSql("SELECT * FROM `project_data_capture` INNER JOIN `proj_input` ON proj_input.id = project_data_capture.proj_input_id INNER JOIN `input_info` ON input_info.id = proj_input.input_info_id WHERE project_data_capture.project_id = ? ORDER BY `project_data_capture`.`user_submission_num` ASC", [project_id], renderFunc,
+			  //tx.executeSql("CREATE TEMPORARY TABLE IF NOT EXISTS user_submission_num AS (SELECT DISTINCT `project_data_capture`.`user_submission_num` FROM `project_data_capture` WHERE `project_data_capture`.`project_id` = 1); SELECT * FROM user_submission_num CROSS JOIN `proj_input` INNER JOIN `input_info` ON `input_info`.`id` = `proj_input`.`input_info_id` LEFT JOIN `project_data_capture` ON `project_data_capture`.`proj_input_id` = `proj_input`.`id` ORDER BY user_submission_num.user_submission_num ;", [project_id], renderFunc, jeep.webdb.onError);
+			  tx.executeSql("SELECT DISTINCT `project_data_capture`.`user_submission_num` FROM `project_data_capture` CROSS JOIN `proj_input` INNER JOIN `input_info` ON `input_info`.`id` = `proj_input`.`input_info_id` LEFT JOIN `project_data_capture` ON `project_data_capture`.`proj_input_id` = `proj_input`.`id` ORDER BY user_submission_num.user_submission_num AND `project_data_capture`.`project_id` = 1 ;", [], renderFunc,
               jeep.webdb.onError);
         });
       }
@@ -626,6 +627,8 @@
       }
 	  
 	  function loadAllCapData(tx, rs) {
+		alert("Loading All Data Cap");
+		
 		var lastsub = 0;
 		var lastuserid = 0;
 		var lasttitle = [];
@@ -2118,7 +2121,6 @@
 	  }
 	  
 	  function loadAllUsers(tx, rs) {
-		alert('load Users');
         var rowOutput = [];
         for (var i=0; i < rs.rows.length; i++) {
           rowOutput.push(renderAllUsers(rs.rows.item(i)));
