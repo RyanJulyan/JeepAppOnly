@@ -11,7 +11,7 @@
 	  var AllUsersDataCap = [];
 	  
 	  // For Server
-	  var url_extention = "http://jeep.mi-project.info/include/";
+	  var url_extention = "http://jeep.mi-project.info/apponly/include/";
 	  
 	  //For Local
 	  //var url_extention = "include/";
