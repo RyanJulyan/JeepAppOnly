@@ -70,10 +70,17 @@
 			  alert("Geolocation is not supported by this browser.");
 		  }
 		  latitude = document.getElementById('lat').value;
-		  longitude = document.getElementById('long').value;
+		  longitude = document.getElementById('long').value;		  
 	  }
-	  // run geolocation for form to be populated
-	  latLong();
+	  	// run geolocation for form to be populated
+		var r = confirm("Activate Your Location And Allow Us To Use It?");
+		
+		if (r == true) {
+			latLong();
+		} else {
+			latitude = "User Declined Location";
+			longitude = "User Declined Location";
+		}
       
 	  jeep.webdb.addUser = function(userText, latitude, longitude) {
 		
@@ -336,7 +343,18 @@
 	  jeep.webdb.getAllProjects = function(renderFunc) {
         var db = jeep.webdb.db;
         db.transaction(function(tx) {
-          tx.executeSql("SELECT id, name, start_date FROM project ORDER BY start_date ASC", [], renderFunc,
+          tx.executeSql("SELECT id, name, project_logo, start_date FROM project ORDER BY start_date ASC", [], renderFunc,
+              jeep.webdb.onError);
+        });
+      }
+	  
+	  jeep.webdb.getProjectLogo = function(renderFunc) {
+        var db = jeep.webdb.db;
+        db.transaction(function(tx) {
+			
+		  var project_id = document.getElementById('project_id').value;
+		  
+          tx.executeSql("SELECT project_logo FROM project WHERE id = ?", [project_id], renderFunc,
               jeep.webdb.onError);
         });
       }
@@ -353,7 +371,7 @@
         var db = jeep.webdb.db;
         db.transaction(function(tx) {
 		  
-		  var project_id = 1;
+		  var project_id = document.getElementById('project_id').value;
 		  
           tx.executeSql("SELECT proj_input.id AS id, label, required, input_name, data_type FROM `proj_input` INNER JOIN `input_info` ON proj_input.input_info_id = input_info.id INNER JOIN `data_type` ON input_info.data_type_id = data_type.id WHERE project_id=? ORDER BY input_name;", [project_id], renderFunc,
               jeep.webdb.onError);
@@ -424,6 +442,14 @@
 		$("#project_for_data").html('').append(rowOutput).trigger('create');
       }
 	  
+	  function loadAllProjectsForUser(tx, rs) {
+        var rowOutput = "";
+        for (var i=0; i < rs.rows.length; i++) {
+          rowOutput += renderProjectsForUser(rs.rows.item(i));
+        }
+		$("#project_for_user").html('').append(rowOutput).trigger('create');
+      }
+	  
 	  function loadAllProjects(tx, rs) {
         var rowOutput = "";
         var project_select = document.getElementById("project_select");
@@ -432,6 +458,16 @@
         }
       
         project_select.innerHTML = rowOutput;
+      }
+	  
+	  function loadProjectLogo(tx, rs) {
+        var rowOutput = "";
+        for (var i=0; i < rs.rows.length; i++) {
+          rowOutput = renderProjectLogo(rs.rows.item(i));
+        }
+      
+        document.getElementById('user_log_img').src = rowOutput;
+		document.getElementById('project_cap_img').src = rowOutput;
       }
 	  
 	  function loadAllInputInfo(tx, rs) {
@@ -511,8 +547,21 @@
         return '<button class="btnBigger" data-role="button" data-theme="d" data-icon="carat-r" data-iconpos="right">'+ row.name  +'</button>';
       }
 	  
+	  function renderProjectsForUser(row) {
+		  if(row.project_logo != "" ){
+		  	return '<li onclick="chosenProject('+row.id+')" class="btnBigger" data-theme="d"><a href="#user"> <img src="'+row.project_logo+'"><h2>'+ row.name  +'</h2></a></li>';
+		  }
+		  else{
+        	return '<li onclick="chosenProject('+row.id+')" class="btnBigger" data-theme="d"><a href="#user"><img src="img/proj_img.png"><h2>'+ row.name  +'</h2></a></li>';
+		  }
+      }
+	  
 	  function renderProjectsSelec(row) {
         return "<option value='"+row.id+"'>" + row.name  + " "+ row.start_date.substring(0, 15) +" </option>";
+      }
+	  
+	  function renderProjectLogo(row) {
+        return row.project_logo;
       }
 	  
       function renderDataTypeSelec(row) {
@@ -561,6 +610,7 @@
 				jeep.webdb.getAllDataTypes(loadAllDataTypes);
 				jeep.webdb.getAllProjects(loadAllProjects);
 				jeep.webdb.getAllProjects(loadAllProjectsForData);
+				jeep.webdb.getAllProjects(loadAllProjectsForUser);
 				jeep.webdb.getAllInputInfo(loadAllInputInfo);
 				jeep.webdb.getAllCapData(loadAllCapData);
 				
@@ -607,7 +657,7 @@
       }
       
       function addUser() {
-        var user = document.getElementById("user");
+        var user = document.getElementById("user_cap_val");
 		latitude = document.getElementById('lat');
 		longitude = document.getElementById('long');
         jeep.webdb.addUser(user.value, latitude.value, longitude.value);
@@ -738,4 +788,58 @@
 				}
 			}
 		}
+	  }
+	  
+	  function chosenProject(project_id){
+		
+		document.getElementById('project_id').value = project_id;
+		
+	  }
+	  
+	  function setServProject(){
+		
+		var admin_id = document.getElementById("admin_id").value;
+		
+		var name = document.getElementById("project_name").value;
+		var big_logo = document.getElementById("big_logo").files[0];
+		var small_logo = document.getElementById("small_logo").files[0];
+		var project_logo = document.getElementById("project_logo").files[0];
+		var background = document.getElementById("background").files[0];
+		var start_date = document.getElementById("start_date").value;
+		var end_date = document.getElementById("end_date").value;
+		
+		var formdata = new FormData();
+		
+		formdata.append("admin_id", admin_id);
+		
+		formdata.append("name", name);
+		formdata.append("big_logo", big_logo);
+		formdata.append("small_logo", small_logo);
+		formdata.append("project_logo", project_logo);
+		formdata.append("background", background);
+		formdata.append("start_date", start_date);
+		formdata.append("end_date", end_date);
+		
+		console.log(formdata);
+		
+		$.ajax({
+			async: false,
+			type: "POST",
+			data:formdata,
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"set_project.php",
+			processData: false, // Don't process the files
+			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data, textStatus, jqXHR){
+				//console.log(data, textStatus, jqXHR);
+				alert("Uploaded to Server")
+			},
+			error:function(xhr){
+				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
 	  }
