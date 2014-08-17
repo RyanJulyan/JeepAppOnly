@@ -1,12 +1,18 @@
-
+	  
       var jeep = {};
       jeep.webdb = {};
       jeep.webdb.db = null;
 	  var latitude = null;
 	  var longitude = null;
 	  var user_submission_num = 1;
-	 
-      
+	  var AdminLogInfoArr = [];
+	  
+	  // Local Location
+      // var url_extention = "include/";
+	  
+	  // Server Live App Location
+	  var url_extention = "jeep.mi-project.info/include/";
+	  
       jeep.webdb.open = function() {
 		var shortname = "myDB";
 		var version =  "1.0";
@@ -73,9 +79,9 @@
 		  longitude = document.getElementById('long').value;		  
 	  }
 	  	// run geolocation for form to be populated
-		var r = confirm("Activate Your Location And Allow Us To Use It?");
+		var confirmLocationUse = confirm("Activate Your Location And Allow Us To Use It?");
 		
-		if (r == true) {
+		if (confirmLocationUse == true) {
 			latLong();
 		} else {
 			latitude = "User Declined Location";
@@ -87,10 +93,51 @@
         var db = jeep.webdb.db;
         db.transaction(function(tx){
 			
+			//var date_time_in = new Date(year, month, day,  s, minutes, seconds);
+			
 			var date_time_in = new Date();
+			var year = date_time_in.getFullYear();
+			var month = date_time_in.getMonth();
+			var day = date_time_in.getDate();
+			var hours = date_time_in.getHours();
+			var minutes = date_time_in.getMinutes();
+			var seconds = date_time_in.getSeconds();
+			date_time_in = year+"-"+addLeadingZeros(month, 2)+"-"+addLeadingZeros(day, 2)+" "+addLeadingZeros(hours, 2)+":"+addLeadingZeros(minutes, 2)+":"+addLeadingZeros(seconds, 2);
+			
+			console.log(date_time_in);
+			// 2014-08-04 05:21:37
 			
 			tx.executeSql("INSERT INTO user(name, date_time_in, cur_lat, cur_long) VALUES (?,?,?,?)",
 				[userText, date_time_in, latitude, longitude],
+				jeep.webdb.onSuccess,
+				jeep.webdb.onError
+			);
+         });
+      }
+	  
+	  jeep.webdb.setUserLogOut = function() {
+		
+        var db = jeep.webdb.db;
+        db.transaction(function(tx){
+			
+			var user_id = $('#user_id').val();
+			
+			//var date_time_in = new Date(year, month, day,  s, minutes, seconds);
+			
+			var date_time_out = new Date();
+			var year = date_time_out.getFullYear();
+			var month = date_time_out.getMonth();
+			var day = date_time_out.getDate();
+			var hours = date_time_out.getHours();
+			var minutes = date_time_out.getMinutes();
+			var seconds = date_time_out.getSeconds();
+			date_time_out = year+"-"+addLeadingZeros(month, 2)+"-"+addLeadingZeros(day, 2)+" "+addLeadingZeros(hours, 2)+":"+addLeadingZeros(minutes, 2)+":"+addLeadingZeros(seconds, 2);
+			
+			console.log(date_time_out);
+			// 2014-08-04 05:21:37
+			
+			tx.executeSql("UPDATE  user SET  date_time_out = ? WHERE  id =?;",
+				[date_time_out, user_id],
 				jeep.webdb.onSuccess,
 				jeep.webdb.onError
 			);
@@ -148,6 +195,15 @@
           db.transaction(function(tx){
 		  
 			var date_time_created = new Date();
+			
+			var date_time_in = new Date();
+			var year = date_time_in.getFullYear();
+			var month = date_time_in.getMonth();
+			var day = date_time_in.getDate();
+			var hours = date_time_in.getHours();
+			var minutes = date_time_in.getMinutes();
+			var seconds = date_time_in.getSeconds();
+			date_time_created = year+"-"+addLeadingZeros(month, 2)+"-"+addLeadingZeros(day, 2)+" "+addLeadingZeros(hours, 2)+":"+addLeadingZeros(minutes, 2)+":"+addLeadingZeros(seconds, 2);
 		
 			tx.executeSql("INSERT INTO project(admin_id, name, big_logo, small_logo, project_logo, background, start_date, end_date, date_time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 				[admin_id, name, big_logo, small_logo, project_logo, background, start_date, end_date, date_time_created],
@@ -166,6 +222,14 @@
           db.transaction(function(tx){
 		  
 			var date_time_created = new Date();
+			var date_time_in = new Date();
+			var year = date_time_in.getFullYear();
+			var month = date_time_in.getMonth();
+			var day = date_time_in.getDate();
+			var hours = date_time_in.getHours();
+			var minutes = date_time_in.getMinutes();
+			var seconds = date_time_in.getSeconds();
+			date_time_created = year+"-"+addLeadingZeros(month, 2)+"-"+addLeadingZeros(day, 2)+" "+addLeadingZeros(hours, 2)+":"+addLeadingZeros(minutes, 2)+":"+addLeadingZeros(seconds, 2);
 		
 			tx.executeSql("INSERT INTO project_data_capture(proj_input_id, user_id, user_submission_num, project_id, value, cur_lat, cur_long, date_time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 				[proj_input_id, user_id, user_submission_num, project_id, value, cur_lat, cur_long, date_time_created],
@@ -245,6 +309,13 @@
 		 db.transaction(function(tx){
 			
 			var date_time_in = new Date();
+			var year = date_time_in.getFullYear();
+			var month = date_time_in.getMonth();
+			var day = date_time_in.getDate();
+			var hours = date_time_in.getHours();
+			var minutes = date_time_in.getMinutes();
+			var seconds = date_time_in.getSeconds();
+			date_time_in = year+"-"+addLeadingZeros(month, 2)+"-"+addLeadingZeros(day, 2)+" "+addLeadingZeros(hours, 2)+":"+addLeadingZeros(minutes, 2)+":"+addLeadingZeros(seconds, 2);
 			
 			tx.executeSql("INSERT INTO user(name, date_time_in, cur_lat, cur_long) VALUES ('Promoter Name',?,?,?)",
 				[date_time_in, latitude, longitude],
@@ -280,8 +351,15 @@
 		 db.transaction(function(tx){
 			
 			var date_time_in = new Date();
-			//project('id' INTEGER PRIMARY KEY ASC, 'admin_id' INTEGER, 'name' VARCHAR(255), 'big_logo' VARCHAR(255), 'small_logo' VARCHAR(255), 'project_logo' VARCHAR(255), 'background' VARCHAR(255), 'start_date' DATETIME, 'end_date' DATETIME, 'date_time_created' DATETIME)", []);
-			tx.executeSql("INSERT INTO project(admin_id, name, big_logo, small_logo, project_logo, background, start_date, end_date,date_time_created) VALUES (1, 'My Project', 'Big Logo', 'Small Logo', 'Project Logo', 'background', ?, ?, ?)",
+			var year = date_time_in.getFullYear();
+			var month = date_time_in.getMonth();
+			var day = date_time_in.getDate();
+			var hours = date_time_in.getHours();
+			var minutes = date_time_in.getMinutes();
+			var seconds = date_time_in.getSeconds();
+			date_time_in = year+"-"+addLeadingZeros(month, 2)+"-"+addLeadingZeros(day, 2)+" "+addLeadingZeros(hours, 2)+":"+addLeadingZeros(minutes, 2)+":"+addLeadingZeros(seconds, 2);
+			
+			tx.executeSql("INSERT INTO project(admin_id, name, big_logo, small_logo, project_logo, background, start_date, end_date,date_time_created) VALUES (1, 'My Project', 'projects/1/warrior5.png', 'projects/1/warrior5.png', 'projects/1/warrior5.png', 'projects/1/warrior5.png', ?, ?, ?)",
 				[date_time_in,date_time_in,date_time_in],
 				jeep.webdb.onSuccess,
 				jeep.webdb.onError
@@ -293,6 +371,13 @@
 		 db.transaction(function(tx){
 			
 			var date_time_in = new Date();
+			var year = date_time_in.getFullYear();
+			var month = date_time_in.getMonth();
+			var day = date_time_in.getDate();
+			var hours = date_time_in.getHours();
+			var minutes = date_time_in.getMinutes();
+			var seconds = date_time_in.getSeconds();
+			date_time_in = year+"-"+addLeadingZeros(month, 2)+"-"+addLeadingZeros(day, 2)+" "+addLeadingZeros(hours, 2)+":"+addLeadingZeros(minutes, 2)+":"+addLeadingZeros(seconds, 2);
 			
 			tx.executeSql("INSERT INTO project_data_capture(proj_input_id, user_id, user_submission_num, project_id, value, cur_lat, cur_long, date_time_created) VALUES (1, 1, 1, 1, 'My Name', ?, ?, ?)",
 				[latitude,longitude,date_time_in],
@@ -310,12 +395,15 @@
       
       jeep.webdb.onSuccess = function(tx, r) {
         // re-render the data.
+		// alert("Transaction Successful");
+		jeep.webdb.getAllProjects(loadAllProjectsForUser);
         jeep.webdb.getAllprojectItems(loadprojectItems);
 		jeep.webdb.getAllDataTypes(loadAllDataTypes);
 		jeep.webdb.getAllProjects(loadAllProjects);
 		jeep.webdb.getAllProjects(loadAllProjectsForData);
 		jeep.webdb.getAllInputInfo(loadAllInputInfo);
-		jeep.webdb.getAllCapData(loadAllCapData);
+		// jeep.webdb.getAllCapData(loadAllCapData);
+		
       }
 	  
 	  jeep.webdb.onChangeSuccess = function(tx, r) {
@@ -326,8 +414,8 @@
 	  jeep.webdb.getAllCapData = function(renderFunc) {
         var db = jeep.webdb.db;
         db.transaction(function(tx) {
-		  var project_id = 1;
-          tx.executeSql("SELECT * FROM `project_data_capture` INNER JOIN `proj_input` ON proj_input.id = project_data_capture.proj_input_id INNER JOIN `input_info` ON input_info.id = proj_input.input_info_id WHERE project_data_capture.project_id = ? ORDER BY `project_data_capture`.`user_submission_num` ASC", [project_id], renderFunc,
+		  var project_id = document.getElementById('project_id').value;
+          tx.executeSql("SELECT DISTINCT `Tet`.`user_submission_num`, `Tet`.`user_id`, `input_name`, `value`, `cur_lat`, `cur_long`, `date_time_created` FROM (SELECT DISTINCT `project_data_capture`.`user_submission_num`,`project_data_capture`.`user_id` FROM `project_data_capture`) AS Tet CROSS JOIN `proj_input` INNER JOIN `input_info` ON `input_info`.`id` = `proj_input`.`input_info_id` LEFT JOIN `project_data_capture` ON `project_data_capture`.`proj_input_id` = `proj_input`.`id` AND `Tet`.`user_id` = `project_data_capture`.`user_id` AND `project_data_capture`.`user_submission_num` = `Tet`.`user_submission_num` WHERE `project_data_capture`.`project_id` = ? OR `project_data_capture`.`project_id` IS NULL ORDER BY `Tet`.user_id, `Tet`.user_submission_num, value ASC", [project_id], renderFunc,
               jeep.webdb.onError);
         });
       }
@@ -374,6 +462,26 @@
 		  var project_id = document.getElementById('project_id').value;
 		  
           tx.executeSql("SELECT proj_input.id AS id, label, required, input_name, data_type FROM `proj_input` INNER JOIN `input_info` ON proj_input.input_info_id = input_info.id INNER JOIN `data_type` ON input_info.data_type_id = data_type.id WHERE project_id=? ORDER BY input_name;", [project_id], renderFunc,
+              jeep.webdb.onError);
+        });
+      }
+	  
+	  jeep.webdb.getCurrentUserId = function(renderFunc) {
+        var db = jeep.webdb.db;
+        db.transaction(function(tx) {
+		  
+		  var userName = document.getElementById('user_name').value;
+		  
+          tx.executeSql("SELECT id FROM user WHERE name=? ORDER BY id DESC LIMIT 1;", [userName], renderFunc,
+              jeep.webdb.onError);
+        });
+      }
+	  
+	  jeep.webdb.getAdminLogInfo = function(renderFunc) {
+        var db = jeep.webdb.db;
+        db.transaction(function(tx) {
+		  
+          tx.executeSql("SELECT * FROM admin ;", [], renderFunc,
               jeep.webdb.onError);
         });
       }
@@ -434,6 +542,15 @@
 		$("#data_type_select").html('').html('').append(rowOutput).trigger('create');
       }
 	  
+	  function loadAdminLogInfo(tx, rs) {
+		
+		for (var i=0; i < rs.rows.length; i++) {
+          
+		  	AdminLogInfoArr[i] = {'id' : rs.rows.item(i).id, 'name' : rs.rows.item(i).user_name,  'password': rs.rows.item(i).password};
+        }
+      }
+	  
+	  
 	  function loadAllProjectsForData(tx, rs) {
         var rowOutput = "";
         for (var i=0; i < rs.rows.length; i++) {
@@ -443,11 +560,13 @@
       }
 	  
 	  function loadAllProjectsForUser(tx, rs) {
+		//alert("loadAllProjectsForUser Loaded");
         var rowOutput = "";
         for (var i=0; i < rs.rows.length; i++) {
           rowOutput += renderProjectsForUser(rs.rows.item(i));
         }
 		$("#project_for_user").html('').append(rowOutput).trigger('create');
+		
       }
 	  
 	  function loadAllProjects(tx, rs) {
@@ -465,9 +584,16 @@
         for (var i=0; i < rs.rows.length; i++) {
           rowOutput = renderProjectLogo(rs.rows.item(i));
         }
+		
+		if(rowOutput == null || rowOutput == ""){
+			$('#user_log_img').attr('src', 'img/proj_img_wht.png').trigger('create');
+			$('#project_cap_img').attr('src', 'img/proj_img_wht.png').trigger('create');
+		}
+		else{
+			document.getElementById('user_log_img').src = rowOutput;
+			document.getElementById('project_cap_img').src = rowOutput;
+		}
       
-        document.getElementById('user_log_img').src = rowOutput;
-		document.getElementById('project_cap_img').src = rowOutput;
       }
 	  
 	  function loadAllInputInfo(tx, rs) {
@@ -498,7 +624,147 @@
       }
 	  
 	  function loadAllCapData(tx, rs) {
+		
+		var last_user_id = 0;
+		var last_user_sub = 0;
+		
+		var row_array_full = '[{}';
+		var row_array = {};
+		
+		var total_subs =0;
+		
+		for (var i=0; i < rs.rows.length; i++) {
+			console.log("For loop pos: "+i);
+			if(last_user_id == rs.rows.item(i).user_id){
+				
+				if(last_user_sub == rs.rows.item(i).user_submission_num){
+					row_array[rs.rows.item(i).input_name] = rs.rows.item(i).value;
+					row_array['cur_lat'] = rs.rows.item(i).cur_lat;
+					row_array['cur_long'] = rs.rows.item(i).cur_long;
+					row_array['date_time_created'] = rs.rows.item(i).date_time_created;
+					last_user_id = rs.rows.item(i).user_id;
+					last_user_sub = rs.rows.item(i).user_submission_num;
+					console.log("If 2 Input:\n");
+					console.log(row_array);
+				}
+				else{
+					row_array_full[row_array_full.length] +="," + JSON.stringify(row_array);
+					console.log(row_array.length);
+					console.log(row_array_full);
+					total_subs++;
+					
+					console.log("total_subs: " + total_subs);
+					row_array[rs.rows.item(i).input_name] = rs.rows.item(i).value;
+					row_array['cur_lat'] = rs.rows.item(i).cur_lat;
+					row_array['cur_long'] = rs.rows.item(i).cur_long;
+					row_array['date_time_created'] = rs.rows.item(i).date_time_created;
+					last_user_id = rs.rows.item(i).user_id;
+					console.log("Else 2 Input:");
+					console.log(row_array);
+				}
+				
+			}
+			else{
+				row_array_full += "," + JSON.stringify(row_array);
+				console.log(row_array.length);
+				console.log(row_array_full);
+				total_subs++;
+				
+				console.log("total_subs: " + total_subs);
+				row_array[rs.rows.item(i).input_name] = rs.rows.item(i).value;
+				row_array['cur_lat'] = rs.rows.item(i).cur_lat;
+				row_array['cur_long'] = rs.rows.item(i).cur_long;
+				row_array['date_time_created'] = rs.rows.item(i).date_time_created;
+				last_user_id = rs.rows.item(i).user_id;
+				console.log("Else Input:");
+				console.log(row_array);
+			}
+			
+        }
+		row_array_full += "," + JSON.stringify(row_array);
+		row_array_full += ']';
+		console.log(row_array_full);
+		$("#totalSubs").html('').append(total_subs).trigger('create');
+		
+		var json_array_full = JSON.parse(row_array_full);
+		
+		console.log(Object.keys(json_array_full[2]));
+		console.log("\n");
+		var jasonKeys = Object.keys(json_array_full[2]);
+		var dataTable = '<tr>';
+		for(var p = 0; p < jasonKeys.length; p++){
+			dataTable += "<th>" + jasonKeys[p] + "</th>";
+		}
+		dataTable += '</tr><tr>';
+		console.log(dataTable);
+		for(var k = 2; k < json_array_full.length; k++){
+		
+			for(var l = 0; l < jasonKeys.length; l++){
+				dataTable += "<th>" +  (json_array_full[k][jasonKeys[l]])+ "</td>";
+			}
+			dataTable += '</tr><tr>';
+		}
+		dataTable += '</tr>';
+		$("#render_data").html('').append(dataTable).trigger('create');
+		/*
+		//json_response[total_subs] = row_array;
+		console.log("\n");
+		console.log("Subs: " + total_subs + "\nOriginal Data \n");
+		console.log("KEYS:\n"+Object.keys(json_response[0]));
+		
+		var keysArr = String(Object.keys(json_response[0])).split(",");
+		
+		console.log(keysArr);
+		console.log(keysArr.length);
+		
+		// console.log(json_response[0][keysArr[0]]);
+		console.log("\n\n");
+		
+		
+		for (var k=0; k < json_response.length; k++) {
+			
+			//for(var l=0; l< keysArr.length; l++){
+				console.log(json_response[k][keysArr[0]]);
+			//}
+		}
+		
+		
+		
+		/*
+		if(lasttitle.indexOf(rs.rows.item(i).input_name) == -1){
+			  rowOutput += renderCapDatahead(rs.rows.item(i));
+			  lasttitle.push(rs.rows.item(i).input_name);
+		  }
+		
+		rowOutput += "</tr><tr>";
+		
+        for (var j=0; j < rs.rows.length; j++) {
+		
+		  if(lastsub == rs.rows.item(j).user_submission_num){
+			  rowOutput += renderCapDataRow(rs.rows.item(j));
+			  lastsub = rs.rows.item(j).user_submission_num;
+			  total_subs++;
+		  }
+		  else{
+			  rowOutput += "</tr>";
+			  rowOutput += "<tr>";
+			  rowOutput += renderCapDataRow(rs.rows.item(j));
+			  lastsub = rs.rows.item(j).user_submission_num;
+			  total_subs++;
+		  }
+        }
+        rowOutput += "</tr>";
+        //render_data.innerHTML = rowOutput;
+		$("#render_data").html('').append(rowOutput).trigger('create');
+		$("#totalSubs").html('').append(total_subs).trigger('create');
+		*/
+      }
+	  
+	  /*
+	  
+	  function loadAllCapData(tx, rs) {
 		var lastsub =0;
+		var total_subs =0;
 		var lasttitle = [];
         var rowOutput = "<tr>";
         //var render_data = document.getElementById("render_data");
@@ -518,17 +784,34 @@
 		  if(lastsub == rs.rows.item(j).user_submission_num){
 			  rowOutput += renderCapDataRow(rs.rows.item(j));
 			  lastsub = rs.rows.item(j).user_submission_num;
+			  total_subs++;
 		  }
 		  else{
 			  rowOutput += "</tr>";
 			  rowOutput += "<tr>";
 			  rowOutput += renderCapDataRow(rs.rows.item(j));
 			  lastsub = rs.rows.item(j).user_submission_num;
+			  total_subs++;
 		  }
         }
         rowOutput += "</tr>";
         //render_data.innerHTML = rowOutput;
 		$("#render_data").html('').append(rowOutput).trigger('create');
+		$("#totalSubs").html('').append(total_subs).trigger('create');
+      }
+	  
+	  */
+	  
+	  function loadCurrentUserId(tx, rs) {
+        var rowOutput = "";
+        for (var i=0; i < rs.rows.length; i++) {
+          rowOutput = renderCurrentUserId(rs.rows.item(i));
+        }
+		$("#user_id").val(rowOutput).trigger('create');
+      }
+	  
+	  function renderCurrentUserId(row) {
+        return row.id;
       }
 	  
 	  function renderCapDatahead(row) {
@@ -544,16 +827,23 @@
       }
 	  
 	  function renderProjectsForData(row) {
-        return '<button class="btnBigger" data-role="button" data-theme="d" data-icon="carat-r" data-iconpos="right">'+ row.name  +'</button>';
+		  if(row.project_logo != "" ){
+		  	return '<li onclick="chosenProject('+row.id+')" class="btnBigger" data-theme="d"><a href="#view_data" data-transition="slide"> <img src="'+row.project_logo+'"><h2>'+ row.name  +'</h2></a></li>';
+		  }
+		  else{
+        	return '<li onclick="chosenProject('+row.id+')" class="btnBigger" data-theme="d"><a href="#view_data" data-transition="slide"><img src="img/proj_img.png"><h2>'+ row.name  +'</h2></a></li>';
+		  }
       }
 	  
 	  function renderProjectsForUser(row) {
+		  //alert("renderProjectsForUser Fired");
 		  if(row.project_logo != "" ){
-		  	return '<li onclick="chosenProject('+row.id+')" class="btnBigger" data-theme="d"><a href="#user"> <img src="'+row.project_logo+'"><h2>'+ row.name  +'</h2></a></li>';
+		  	return '<li onclick="chosenProject('+row.id+')" class="btnBigger" data-theme="d"><a href="#user" data-transition="slide"> <img src="'+row.project_logo+'"><h2>'+ row.name  +'</h2></a></li>';
 		  }
 		  else{
-        	return '<li onclick="chosenProject('+row.id+')" class="btnBigger" data-theme="d"><a href="#user"><img src="img/proj_img.png"><h2>'+ row.name  +'</h2></a></li>';
+        	return '<li onclick="chosenProject('+row.id+')" class="btnBigger" data-theme="d"><a href="#user" data-transition="slide"><img src="img/proj_img.png"><h2>'+ row.name  +'</h2></a></li>';
 		  }
+		  
       }
 	  
 	  function renderProjectsSelec(row) {
@@ -570,29 +860,31 @@
 	  
 	  
 	  function renderTodo(row) {
+		   var cur_project_id = document.getElementById('project_id').value;
+		   var cur_user_id = document.getElementById('user_id').value;
 		// alert('Loaded');
 		if(row.data_type == "radio"){	
 			if(row.required = 1){
-				return "<label for='"+row.label+"_"+row.id+"'>"+row.label+"</label><input onchange='addProjectDataCapture(" + row.id  + ", 1, 1,this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' required>";
+				return "<label for='"+row.label+"_"+row.id+"'>"+row.label+"</label><input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' required>";
 			}
 			else{
-				return "<label for='"+row.label+"_"+row.id+"' >"+row.label+"</label><input onchange='addProjectDataCapture(" + row.id  + ", 1, 1,this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"'>";
+				return "<label for='"+row.label+"_"+row.id+"' >"+row.label+"</label><input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"'>";
 			}
 		}
 		else if(row.data_type == "checkbox"){
 			if(row.required = 1){
-				return "<input onchange='addProjectDataCapture(" + row.id  + ", 1, 1,this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' data-role='input' data-theme='d' required /><label for='"+row.label+"_"+row.id+"'>"+row.label+"</label>";
+				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' data-role='input' data-theme='d' required /><label for='"+row.label+"_"+row.id+"'>"+row.label+"</label>";
 			}
 			else{
-				return "<input onchange='addProjectDataCapture(" + row.id  + ", 1, 1,this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' data-role='input' data-theme='d' /><label for='"+row.label+"_"+row.id+"'>"+row.label+"</label>";
+				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' data-role='input' data-theme='d' /><label for='"+row.label+"_"+row.id+"'>"+row.label+"</label>";
 			}
 		}
 		else{
 			if(row.required = 1){
-				return "<input onchange='addProjectDataCapture(" + row.id  + ", 1, 1,this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' placeholder='"+row.label+"' data-role='input' data-theme='d' required />";
+				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' placeholder='"+row.label+"' data-role='input' data-theme='d' required />";
 			}
 			else{
-				return "<input onchange='addProjectDataCapture(" + row.id  + ", 1, 1,this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' placeholder='"+row.label+"' data-role='input' data-theme='d' />";
+				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' placeholder='"+row.label+"' data-role='input' data-theme='d' />";
 			}
 		}
       }
@@ -605,7 +897,7 @@
 			} else {
 				jeep.webdb.open();
 				jeep.webdb.createTables();
-				//jeep.webdb.initTables();
+				// jeep.webdb.initTables();
 				jeep.webdb.getAllprojectItems(loadprojectItems);
 				jeep.webdb.getAllDataTypes(loadAllDataTypes);
 				jeep.webdb.getAllProjects(loadAllProjects);
@@ -613,6 +905,25 @@
 				jeep.webdb.getAllProjects(loadAllProjectsForUser);
 				jeep.webdb.getAllInputInfo(loadAllInputInfo);
 				jeep.webdb.getAllCapData(loadAllCapData);
+				
+				if(navigator.onLine){
+					var confirmloadServProject = confirm("Get the projects information from the server?\nTo ensure that you get the latest projects");
+		
+					if (confirmloadServProject == true) {
+						loadServProject();
+						loadServAdmin();
+						loadServDataType();
+						loadServInputInfo();
+						loadServProjInput();
+						loadServSuperUser();
+					} else {
+						alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
+					}
+					
+				}
+				else{
+					alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device");
+				}
 				
 			}
 		} catch(e) {
@@ -660,6 +971,7 @@
         var user = document.getElementById("user_cap_val");
 		latitude = document.getElementById('lat');
 		longitude = document.getElementById('long');
+		document.getElementById('user_name').value = user.value;
         jeep.webdb.addUser(user.value, latitude.value, longitude.value);
         user.value = "";
       }
@@ -700,7 +1012,7 @@
 	  
 	  function addProject() {
 	  
-		var admin_id = 1;
+		var admin_id = $("#admin_id").val();
 		
 		var project_name = document.getElementById("project_name").value;
 		var big_logo = document.getElementById("big_logo").value;
@@ -772,6 +1084,7 @@
 			}
 		}
 		if(correct == true){
+			$("#cur_subs").html('').append(user_submission_num).trigger('create');
 			user_submission_num++;
 			alert("Submission Saved");
 			document.getElementById('userSubnum').value = user_submission_num;
@@ -783,7 +1096,18 @@
 					
 					$( "#"+elements[i].id ).prop( "checked", false ).checkboxradio("refresh");
 				}
-				else if(elements[i].getAttribute("type") == "text"){
+				else if(elements[i].getAttribute("type") == "text"
+				|| elements[i].getAttribute("type") == "date"
+				|| elements[i].getAttribute("type") == "datetime"
+				|| elements[i].getAttribute("type") == "datetime-local"
+				|| elements[i].getAttribute("type") == "email"
+				|| elements[i].getAttribute("type") == "month"
+				|| elements[i].getAttribute("type") == "number"
+				|| elements[i].getAttribute("type") == "range"
+				|| elements[i].getAttribute("type") == "tel"
+				|| elements[i].getAttribute("type") == "time"
+				|| elements[i].getAttribute("type") == "url"
+				|| elements[i].getAttribute("type") == "week"){
 					elements[i].value = '';
 				}
 			}
@@ -795,6 +1119,16 @@
 		document.getElementById('project_id').value = project_id;
 		
 	  }
+	  
+	  function addLeadingZeros (n, length){ // For date formatiing
+		 var str = (n > 0 ? n : -n) + "";
+		 var zeros = "";
+		 for (var i = length - str.length; i > 0; i--)
+			 zeros += "0";
+		 zeros += str;
+		 return n >= 0 ? zeros : "-" + zeros;
+	  }
+
 	  
 	  function setServProject(){
 		
@@ -835,11 +1169,422 @@
     		complete   : function() {$.mobile.loading('hide')},
 			success: function(data, textStatus, jqXHR){
 				//console.log(data, textStatus, jqXHR);
-				alert("Uploaded to Server")
+				name =  '';
+				start_date =  '';
+				end_date =  '';
+				loadServProject();
+				alert("Uploaded to Server");
+				$.mobile.changePage( "#link_input_to_proj", { transition: "flow", changeHash: false });
 			},
 			error:function(xhr){
 				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 			}
 		});
+		
+		
+		
+	  }
+	  
+	  function setServDataType(){
+		
+		var data_type = document.getElementById("data_type").value;
+		
+		var formdata = new FormData();
+		
+		formdata.append("data_type", data_type);
+		
+		console.log(formdata);
+		
+		$.ajax({
+			async: false,
+			type: "POST",
+			data:formdata,
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"set_data_type.php",
+			processData: false, // Don't process the files
+			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data, textStatus, jqXHR){
+				//console.log(data, textStatus, jqXHR);
+				alert("Uploaded to Server");
+				data_type = '';
+				loadServDataType();
+			},
+			error:function(xhr){
+				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+		
+		
+	  }
+	  
+	  function setServNewInput(){
+		
+		var data_type_select = document.getElementById("data_type_select").value;
+		var input_label = document.getElementById("input_label").value;
+		var input_group_name = document.getElementById("input_group_name").value;
+		var rec_feild = document.getElementById("rec_feild").value;
+		
+		var formdata = new FormData();
+		
+		formdata.append("data_type_select", data_type_select);
+		formdata.append("input_label", input_label);
+		formdata.append("input_group_name", input_group_name);
+		formdata.append("rec_feild", rec_feild);
+		
+		console.log(formdata);
+		
+		$.ajax({
+			async: false,
+			type: "POST",
+			data:formdata,
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"set_input_info.php",
+			processData: false, // Don't process the files
+			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data, textStatus, jqXHR){
+				//console.log(data, textStatus, jqXHR);
+				alert("Uploaded to Server");
+				input_label = '';
+				input_group_name = '';
+				loadServInputInfo();
+			},
+			error:function(xhr){
+				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+		
+		
+	  }
+	  
+	  function setServProjInput(){
+		
+		var project_select = document.getElementById("project_select").value;
+		
+		var select_inputs_checkboxes = document.getElementsByName('select_inputs');
+		
+		var select_inputs_checkboxes_arr = [];
+		
+		
+		for (var i=0;i<select_inputs_checkboxes.length;i++) {
+		  if (select_inputs_checkboxes[i].checked){
+			select_inputs_checkboxes_arr.push(select_inputs_checkboxes[i].value);
+		  }
+		}
+		
+		var json_arr = JSON.stringify(select_inputs_checkboxes_arr);
+		
+		var formdata = new FormData();
+		
+		formdata.append("project_select", project_select);
+		formdata.append("select_inputs_checkboxes_arr", select_inputs_checkboxes_arr);
+		
+		console.log(formdata);
+		
+		$.ajax({
+			async: false,
+			type: "POST",
+			data:formdata,
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"set_proj_input.php",
+			processData: false, // Don't process the files
+			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data, textStatus, jqXHR){
+				console.log(data);
+				alert("Uploaded to Server");
+				loadServProjInput();
+				$.mobile.changePage( "#start", { transition: "flow", changeHash: false });
+				//addProjectInput
+			},
+			error:function(xhr){
+				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+		
+		
+	  }
+	  
+	  
+	function loadServProject(){
+		
+		// alert("loadServProject Fired");
+		
+		var project;
+		$.ajax({
+			async: false,
+			dataType:"json",
+			type: "GET",
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"get_project.php",
+			contentType: "application/json; charset=utf-8",
+			beforeSend : function() {$.mobile.loading('show')},
+			complete   : function() {$.mobile.loading('hide')},
+			success: function(data){
+				console.log(data);
+				project = data;
+				
+				jeep.webdb.open();
+				jeep.webdb.db.transaction(function(tx) {
+					tx.executeSql("DROP TABLE project", []);
+					tx.executeSql("CREATE TABLE IF NOT EXISTS project('id' INTEGER PRIMARY KEY ASC, 'admin_id' INTEGER, 'name' VARCHAR(255), 'big_logo' VARCHAR(255), 'small_logo' VARCHAR(255), 'project_logo' VARCHAR(255), 'background' VARCHAR(255), 'start_date' DATETIME, 'end_date' DATETIME, 'date_time_created' DATETIME)", []);
+				});
+				
+				
+				$.each(project, function(idx, obj) {
+					
+					jeep.webdb.db.transaction(function(tx){
+					tx.executeSql("INSERT INTO project(id, admin_id, name, big_logo, small_logo, project_logo, background, start_date, end_date, date_time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+						[obj.id, obj.admin_id, obj.name, obj.big_logo, obj.small_logo, obj.project_logo, obj.background, obj.start_date, obj.end_date, obj.date_time_created],
+						console.log("Synced Project"),
+						console.log("Project Sync Failed")
+					);
+					
+					});
+					
+				});
+				
+				jeep.webdb.getAllprojectItems(loadprojectItems);
+				jeep.webdb.getAllProjects(loadAllProjectsForUser);
+				jeep.webdb.getAllDataTypes(loadAllDataTypes);
+				jeep.webdb.getAllProjects(loadAllProjects);
+				jeep.webdb.getAllInputInfo(loadAllInputInfo);
+				
+			},
+			error:function(xhr){
+				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+		
+		
+	}
+	
+	function loadServAdmin(){
+		
+		var admin;
+		$.ajax({
+			async: false,
+			dataType:"json",
+			type: "GET",
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"get_admin.php",
+			contentType: "application/json; charset=utf-8",
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data){
+				console.log(data);
+				admin = data;
+				
+				jeep.webdb.open();
+				jeep.webdb.db.transaction(function(tx) {
+					tx.executeSql("DROP TABLE admin", []);
+					tx.executeSql("CREATE TABLE IF NOT EXISTS admin('id' INTEGER PRIMARY KEY ASC, 'super_user_id' INTEGER, 'user_name' VARCHAR(255), 'password' VARCHAR(255), 'active' INTEGER, 'email' VARCHAR(255))", []);
+				});
+				
+				
+				$.each(admin, function(idx, obj) {
+					jeep.webdb.db.transaction(function(tx){
+					tx.executeSql("INSERT INTO admin(id, super_user_id, user_name, password, active, email) VALUES (?, ?, ?, ?, ?, ?)",
+						[obj.id, obj.super_user_id, obj.user_name, obj.password , obj.active , obj.email],
+						console.log("Synced Admin"),
+						console.log("Admin Sync Failed")
+					);
+					
+					});
+					
+				});
+			},
+			error:function(xhr){
+				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+	  }
+	  
+	  function loadServDataType(){
+		  
+		var data_type;
+		$.ajax({
+			async: false,
+			dataType:"json",
+			type: "GET",
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"get_data_type.php",
+			contentType: "application/json; charset=utf-8",
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data){
+				console.log(data);
+				data_type = data;
+				
+				jeep.webdb.open();
+				jeep.webdb.db.transaction(function(tx) {
+					tx.executeSql("DROP TABLE data_type", []);
+					tx.executeSql("CREATE TABLE IF NOT EXISTS data_type('id' INTEGER PRIMARY KEY ASC, 'data_type' VARCHAR(255))", []);
+				});
+				
+				
+				$.each(data_type, function(idx, obj) {
+					
+					jeep.webdb.db.transaction(function(tx){
+					tx.executeSql("INSERT INTO data_type(id, data_type) VALUES (?, ?)",
+						[obj.id, obj.data_type],
+						console.log("Synced Data Type"),
+						console.log("Data Type Sync Failed")
+					);
+					
+					});
+					
+				});
+			},
+			error:function(xhr){
+				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+	  }
+	  
+	  function loadServInputInfo(){
+		var input_info;
+		$.ajax({
+			async: false,
+			dataType:"json",
+			type: "GET",
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"get_input_info.php",
+			contentType: "application/json; charset=utf-8",
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data){
+				console.log(data);
+				input_info = data;
+				
+				jeep.webdb.open();
+				jeep.webdb.db.transaction(function(tx) {
+					tx.executeSql("DROP TABLE input_info", []);
+					tx.executeSql("CREATE TABLE IF NOT EXISTS input_info('id' INTEGER PRIMARY KEY ASC, 'data_type_id' INTEGER, 'label' VARCHAR(255), 'required' INTEGER, 'input_name' VARCHAR(255))", []);
+				});
+				
+				
+				$.each(input_info, function(idx, obj) {
+					
+					jeep.webdb.db.transaction(function(tx){
+					tx.executeSql("INSERT INTO input_info(id, data_type_id, label, required, input_name) VALUES (?, ? , ?, ?, ?)",
+						[obj.id, obj.data_type_id, obj.label, obj.required, obj.input_name],
+						console.log("Synced Input Info"),
+						console.log("Input Info Sync Failed")
+					);
+					
+					});
+					
+				});
+			},
+			error:function(xhr){
+				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+	  }
+	  
+	  function loadServProjInput(){
+		var proj_input;
+		$.ajax({
+			async: false,
+			dataType:"json",
+			type: "GET",
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"get_proj_input.php",
+			contentType: "application/json; charset=utf-8",
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data){
+				console.log(data);
+				proj_input = data;
+				
+				jeep.webdb.open();
+				jeep.webdb.db.transaction(function(tx) {
+					tx.executeSql("DROP TABLE proj_input", []);
+					tx.executeSql("CREATE TABLE IF NOT EXISTS proj_input('id' INTEGER PRIMARY KEY ASC, 'input_info_id' INTEGER, 'project_id' INTEGER)", []);
+				});
+				
+				
+				$.each(proj_input, function(idx, obj) {
+					
+					jeep.webdb.db.transaction(function(tx){
+					tx.executeSql("INSERT INTO proj_input(id, input_info_id, project_id) VALUES (?, ?, ?)",
+						[obj.id, obj.input_info_id, obj.project_id],
+						console.log("Synced Proj Input"),
+						console.log("Proj Input Sync Failed")
+					);
+					
+					});
+					
+				});
+			},
+			error:function(xhr){
+				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+	  }
+	  
+	  function loadServSuperUser(){
+		var super_user;
+		$.ajax({
+			async: false,
+			dataType:"json",
+			type: "GET",
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"get_super_user.php",
+			contentType: "application/json; charset=utf-8",
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data){
+				console.log(data);
+				super_user = data;
+				
+				jeep.webdb.open();
+				jeep.webdb.db.transaction(function(tx) {
+					tx.executeSql("DROP TABLE super_user", []);
+					tx.executeSql("CREATE TABLE IF NOT EXISTS super_user('id' INTEGER PRIMARY KEY ASC, 'user_name' VARCHAR(255), 'password' VARCHAR(255), 'email' VARCHAR(255))", []);
+				});
+				
+				
+				$.each(super_user, function(idx, obj) {
+					
+					jeep.webdb.db.transaction(function(tx){
+					tx.executeSql("INSERT INTO super_user(id, user_name, password, email) VALUES (?, ?, ?, ?)",
+						[obj.id, obj.username, obj.password, obj.email],
+						console.log("Synced Super User"),
+						console.log("Super User Sync Failed")
+					);
+					
+					});
+					
+				});
+			},
+			error:function(xhr){
+				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+		
 		
 	  }
