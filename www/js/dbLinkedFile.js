@@ -414,6 +414,22 @@
 		jeep.webdb.getAllCapData(loadAllCapData);
       }
 	  
+	  jeep.webdb.getAllUsers = function(renderFunc) {
+        var db = jeep.webdb.db;
+        db.transaction(function(tx) {  
+          tx.executeSql("SELECT * FROM `user`", [], renderFunc,
+              jeep.webdb.onError);
+        });
+      }
+	  
+	  jeep.webdb.getAllUserDataCap = function(renderFunc) {
+        var db = jeep.webdb.db;
+        db.transaction(function(tx) {  
+          tx.executeSql("SELECT * FROM `project_data_capture` INNER JOIN `user` ON user.id = project_data_capture.user_id ", [], renderFunc,
+              jeep.webdb.onError);
+        });
+      }
+	  
 	  jeep.webdb.getAllCapData = function(renderFunc) {
         var db = jeep.webdb.db;
         db.transaction(function(tx) {
@@ -533,7 +549,8 @@
         }
 		rowOutput += '</fieldset><br/>';
 		$("#projectItems").html('').append(rowOutput + '<input type="hidden" id="userSubnum" value="1"/><button data-role="button" data-theme="d" data-mini="true" data-icon="check" data-iconpos="right" onclick="updateUserSubMission();">Save</button>').trigger('create'); 
-      
+        $('#Data_Sync').html('').append('User Not Synced').trigger('create');
+		$('#User_Sync').html('').append('Submissions Not Synced').trigger('create');
 		
 	  }
 	  
@@ -861,6 +878,14 @@
         return "<option value='"+row.id+"'>" + row.data_type  + " </option>";
       }
 	  
+	  function renderAllUsers(row) {
+        return [row.id, row.name, row.date_time_in, row.cur_lat, row.cur_long, row.date_time_out];
+      }
+	  
+	  function renderAllUsersDataCap(row) {
+        return [row.id, row.proj_input_id, row.user_id, row.user_submission_num, row.project_id, row.value, row.cur_lat, row.cur_long, row.date_time_created, row.name];
+      }
+	  
 	  
 	  function renderTodo(row) {
 		   var cur_project_id = document.getElementById('project_id').value;
@@ -1075,6 +1100,16 @@
 		jeep.webdb.addProjectDataCapture(proj_input_id, user_id, userSubnum, project_id, val, cur_lat, cur_long);
       }
 	  
+	  function getAllUsers(){
+		  jeep.webdb.open();
+		  jeep.webdb.getAllUsers(loadAllUsers);
+	  }
+	  
+	  function getAllUserDataCap(){
+		  jeep.webdb.open();
+		  jeep.webdb.getAllUserDataCap(loadAllUsersDataCap);
+	  }
+	  
 	  function updateUserSubMission(){
 		
 		var correct = true;
@@ -1135,6 +1170,7 @@
 	  
 	  function setServProject(){
 		
+		
 		var admin_id = document.getElementById("admin_id").value;
 		
 		var name = document.getElementById("project_name").value;
@@ -1172,14 +1208,21 @@
     		complete   : function() {$.mobile.loading('hide')},
 			success: function(data, textStatus, jqXHR){
 				//console.log(data, textStatus, jqXHR);
-				name =  '';
-				start_date =  '';
-				end_date =  '';
-				loadServProject();
+				
+				document.getElementById("project_name").value = "";
+				document.getElementById("big_logo").files[0] = "";
+				document.getElementById("small_logo").files[0] = "";
+				document.getElementById("project_logo").files[0] = "";
+				document.getElementById("background").files[0] = "";
+				document.getElementById("start_date").value = "";
+				document.getElementById("end_date").value = "";
+				
+				$.mobile.loading( "hide" );
 				alert("Uploaded to Server");
 				$.mobile.changePage( "#link_input_to_proj", { transition: "flow", changeHash: false });
 			},
 			error:function(xhr){
+				$.mobile.loading( "hide" );
 				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 			}
 		});
@@ -1591,3 +1634,95 @@
 		
 		
 	  }
+	  
+	  function loadAllUsers(tx, rs) {
+        var rowOutput = [];
+        for (var i=0; i < rs.rows.length; i++) {
+          rowOutput.push(renderAllUsers(rs.rows.item(i)));
+        }
+		
+		//AllUsers = JSON.stringify(rowOutput);
+		AllUsers = rowOutput;
+		//console.log(AllUsers);
+		
+		var formdata = new FormData();
+		
+		formdata.append("AllUsers", AllUsers);
+		
+		//console.log(formdata);
+		
+		$.ajax({
+			async: false,
+			type: "POST",
+			data:formdata,
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"set_users.php",
+			processData: false, // Don't process the files
+			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data, textStatus, jqXHR){
+				console.log(data);
+				//alert("Users Uploaded to Server");
+				
+				$('#User_Sync').html('').append('Users Have Been Uploaded').trigger('create');
+			},
+			error:function(xhr){
+				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+      }
+	  	  
+	  function loadAllUsersDataCap(tx, rs) {
+        var rowOutput = [];
+        for (var i=0; i < rs.rows.length; i++) {
+          rowOutput.push(renderAllUsersDataCap(rs.rows.item(i)));
+		  console.log(rs.rows.item[0]);
+        }
+		
+		//AllUsersDataCap = JSON.stringify(rowOutput);
+		AllUsersDataCap = rowOutput;
+		//console.log(AllUsersDataCap);
+		
+		var formdata = new FormData();
+		
+		formdata.append("AllUsersDataCap", AllUsersDataCap);
+		
+		//console.log(formdata);
+		
+		$.ajax({
+			async: false,
+			type: "POST",
+			data:formdata,
+			crossDomain: true,
+			cache: false,
+			url: url_extention+"set_data_cap.php",
+			processData: false, // Don't process the files
+			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+			beforeSend : function() {$.mobile.loading('show')},
+    		complete   : function() {$.mobile.loading('hide')},
+			success: function(data, textStatus, jqXHR){
+				//console.log(data);
+				//alert("Captured Data Uploaded to Server")
+				$('#Data_Sync').html('').append('Captured Submissions Have Been Uploaded').trigger('create');
+				/*
+				jeep.webdb.open();
+				jeep.webdb.db.transaction(function(tx) {
+					tx.executeSql("DROP TABLE user", []);
+					tx.executeSql("CREATE TABLE IF NOT EXISTS user('id' INTEGER PRIMARY KEY ASC, 'name' VARCHAR(255), 'date_time_in' DATETIME, 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_out' DATETIME)", []);
+					tx.executeSql("DROP TABLE project_data_capture", []);
+					tx.executeSql("CREATE TABLE IF NOT EXISTS project_data_capture('id' INTEGER PRIMARY KEY ASC, 'proj_input_id' INTEGER, 'user_id' INTEGER, 'user_submission_num' INTEGER, 'project_id' INTEGER, 'value' VARCHAR(255), 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_created' DATETIME)", []);
+				});
+				*/
+				
+			},
+			error:function(xhr){
+				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			}
+		});
+		
+		
+		
+      }

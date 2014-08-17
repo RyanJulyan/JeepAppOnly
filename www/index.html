@@ -48,7 +48,8 @@
 		$("#user_log_out").click(function(event){
 			jeep.webdb.open();
 			jeep.webdb.setUserLogOut();
-			
+			getAllUsers();
+			getAllUserDataCap();			
 		});
 		
 		
@@ -88,6 +89,23 @@
 			jeep.webdb.open();
 			jeep.webdb.getAllProjects(loadAllProjectsForUser);
 		});
+		
+		$( document ).on( "click", ".show-page-loading-msg", function() {
+			var $this = $( this ),
+				theme = $this.jqmData( "theme" ) || $.mobile.loader.prototype.options.theme,
+				msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
+				textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+				textonly = !!$this.jqmData( "textonly" );
+				html = $this.jqmData( "html" ) || "";
+			$.mobile.loading( "show", {
+					text: msgText,
+					textVisible: textVisible,
+					theme: theme,
+					textonly: textonly,
+					html: html
+			});
+			setTimeout(function(){setServProject();},100);
+		})
 		
 	});
 </script>
@@ -152,6 +170,7 @@
 		<a href="#create_project" class="btnBigger" data-role="button" data-theme="d" data-icon="action" data-iconpos="right" data-transition="flow">Create Project</a>
         <a href="#link_input_to_proj" class="btnBigger" data-role="button" data-theme="d" data-icon="gear" data-iconpos="right" data-transition="flip">Project Options</a>
 		<a href="#select_project_data" class="btnBigger" data-role="button" data-theme="d" data-icon="arrow-d" data-iconpos="right" data-transition="slidedown">Downlaod Data</a>
+        
 	</div>
 </div>
 
@@ -212,6 +231,7 @@
         <br/>
           <input type="submit" value="Create New Input" data-icon="check" data-iconpos="right"/>
         </form>
+        
     </div>
     <div data-role="footer" data-position="fixed" data-theme="d" data-id="proj_options_admin">
     	<div data-role="navbar">
@@ -236,7 +256,8 @@
     <div class="infoBox" data-role="main" data-theme="d">
         <h2 class="headingStyle">Create Project</h2>
         <!--<form type="post" onsubmit="addProject(); setServProject(); return false;">-->
-        <form type="post" onsubmit="setServProject(); return false;">
+        <!--<form type="post" onsubmit="setServProject(); return false;">-->
+        <form type="post" onsubmit="return false;">
           <input type="text" id="project_name" name="project_name" placeholder="Project Name" />
           <input type="file" name="big_logo" id="big_logo">
           <input type="file" name="small_logo" id="small_logo">
@@ -262,16 +283,18 @@
           <input type="file" name="background" id="background">
           <br/>
           -->
-          Project Start Date:<br/><span class='smallText'>yyyy/mmmm/dd</span>
+          Project Start Date:<br/><span class='smallText'>yyyy/mmmm/dd hh:mm AM/PM</span>
           <br/>
           <input type="datetime-local" name="start_date" id="start_date" data-role="datebox">
           <br/>
-          Project End Date:<br/><span class='smallText'>yyyy/mmmm/dd</span>
+          Project End Date:<br/><span class='smallText'>yyyy/mmmm/dd hh:mm AM/PM</span>
           <br/>
           <input type="datetime-local" name="end_date" id="end_date" data-role="datebox" placeholder="yyyy/mmmm/dd hh:mm">
           <br/>
-          <input type="submit" value="Create Project" data-icon="check" data-iconpos="right" placeholder="yyyy/mmmm/dd hh:mm"/>
+          
+          <input type="submit" value="Create New Input" data-icon="check" data-iconpos="right" class="show-page-loading-msg" data-theme="d" data-textonly="false" data-textvisible="true" data-msgtext="Uploading Project"/>
         </form>
+        
     </div>
 </div>
 
@@ -321,7 +344,7 @@
 	</div>
     <div class="infoBox" data-role="main" data-theme="d">
         <h2 class="headingStyle">Select Project</h2>
-        <ul data-role="listview" data-filter="true" data-filter-placeholder="Search for Project" id="project_for_data">
+        <ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Search for Project" id="project_for_data">
         </ul>
     </div>
 </div>
@@ -380,6 +403,7 @@
 		<h1>
 			Jeep
 		</h1>
+        <a href="#" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="getAllUsers(); getAllUserDataCap();">Upload Data</a>
 	</div>
     <div class="infoBox" data-role="main" data-theme="d">
         <img id="project_cap_img" src="img/proj_img.png" />
@@ -388,6 +412,8 @@
          Current User: <span id="cur_UserName">Unknown User</span>
          <br>
          Number of Submissions: <span id="cur_subs">0</span>
+         <h3 id="User_Sync">User Not Synced</h3>
+         <h3 id="Data_Sync">Submissions Not Synced</h3>
     </div>
 </div>
 <script src="js/dbLinkedFile.js"></script>
