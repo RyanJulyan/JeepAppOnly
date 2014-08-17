@@ -11,7 +11,7 @@
       // var url_extention = "include/";
 	  
 	  // Server Live App Location
-	  var url_extention = "jeep.mi-project.info/include/";
+	  var url_extention = "jeep.mi-project.info/apponly/include/";
 	  
       jeep.webdb.open = function() {
 		var shortname = "myDB";
