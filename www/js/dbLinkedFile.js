@@ -480,7 +480,7 @@
 		  
 		  var project_id = document.getElementById('project_id').value;
 		  
-          tx.executeSql("SELECT proj_input.id AS id, label, required, input_name, data_type FROM `proj_input` INNER JOIN `input_info` ON proj_input.input_info_id = input_info.id INNER JOIN `data_type` ON input_info.data_type_id = data_type.id WHERE project_id=? ORDER BY input_name;", [project_id], renderFunc,
+          tx.executeSql("SELECT proj_input.id AS id, label, required, input_name, data_type FROM `proj_input` INNER JOIN `input_info` ON proj_input.input_info_id = input_info.id INNER JOIN `data_type` ON input_info.data_type_id = data_type.id WHERE project_id=? ORDER BY input_info.id;", [project_id], renderFunc,
               jeep.webdb.onError);
         });
       }
@@ -654,7 +654,7 @@
 		var total_subs =0;
 		
 		for (var i=0; i < rs.rows.length; i++) {
-			console.log("For loop pos: "+i);
+			// console.log("For loop pos: "+i);
 			if(last_user_id == rs.rows.item(i).user_id){
 				
 				if(last_user_sub == rs.rows.item(i).user_submission_num){
@@ -664,59 +664,59 @@
 					row_array['date_time_created'] = rs.rows.item(i).date_time_created;
 					last_user_id = rs.rows.item(i).user_id;
 					last_user_sub = rs.rows.item(i).user_submission_num;
-					console.log("If 2 Input:\n");
-					console.log(row_array);
+					// console.log("If 2 Input:\n");
+					// console.log(row_array);
 				}
 				else{
 					row_array_full[row_array_full.length] +="," + JSON.stringify(row_array);
-					console.log(row_array.length);
-					console.log(row_array_full);
+					// console.log(row_array.length);
+					// console.log(row_array_full);
 					total_subs++;
 					
-					console.log("total_subs: " + total_subs);
+					// console.log("total_subs: " + total_subs);
 					row_array[rs.rows.item(i).input_name] = rs.rows.item(i).value;
 					row_array['cur_lat'] = rs.rows.item(i).cur_lat;
 					row_array['cur_long'] = rs.rows.item(i).cur_long;
 					row_array['date_time_created'] = rs.rows.item(i).date_time_created;
 					last_user_id = rs.rows.item(i).user_id;
-					console.log("Else 2 Input:");
-					console.log(row_array);
+					// console.log("Else 2 Input:");
+					// console.log(row_array);
 				}
 				
 			}
 			else{
 				row_array_full += "," + JSON.stringify(row_array);
-				console.log(row_array.length);
-				console.log(row_array_full);
+				// console.log(row_array.length);
+				// console.log(row_array_full);
 				total_subs++;
 				
-				console.log("total_subs: " + total_subs);
+				// console.log("total_subs: " + total_subs);
 				row_array[rs.rows.item(i).input_name] = rs.rows.item(i).value;
 				row_array['cur_lat'] = rs.rows.item(i).cur_lat;
 				row_array['cur_long'] = rs.rows.item(i).cur_long;
 				row_array['date_time_created'] = rs.rows.item(i).date_time_created;
 				last_user_id = rs.rows.item(i).user_id;
-				console.log("Else Input:");
-				console.log(row_array);
+				// console.log("Else Input:");
+				// console.log(row_array);
 			}
 			
         }
 		row_array_full += "," + JSON.stringify(row_array);
 		row_array_full += ']';
-		console.log(row_array_full);
-		$("#totalSubs").html('').append(total_subs).trigger('create');
+		// console.log(row_array_full);
 		
 		var json_array_full = JSON.parse(row_array_full);
 		
-		console.log(Object.keys(json_array_full[2]));
-		console.log("\n");
+		// console.log(Object.keys(json_array_full[2]));
+		// console.log("\n");
 		var jasonKeys = Object.keys(json_array_full[2]);
+		
 		var dataTable = '<tr>';
 		for(var p = 0; p < jasonKeys.length; p++){
 			dataTable += "<th>" + jasonKeys[p] + "</th>";
 		}
 		dataTable += '</tr><tr>';
-		console.log(dataTable);
+		// console.log(dataTable);
 		for(var k = 2; k < json_array_full.length; k++){
 		
 			for(var l = 0; l < jasonKeys.length; l++){
@@ -725,6 +725,8 @@
 			dataTable += '</tr><tr>';
 		}
 		dataTable += '</tr>';
+		
+		// $("#totalSubs").html('').append(total_subs).trigger('create');
 		$("#render_data").html('').append(dataTable).trigger('create');
 		/*
 		//json_response[total_subs] = row_array;
@@ -779,48 +781,6 @@
 		$("#totalSubs").html('').append(total_subs).trigger('create');
 		*/
       }
-	  
-	  /*
-	  
-	  function loadAllCapData(tx, rs) {
-		var lastsub =0;
-		var total_subs =0;
-		var lasttitle = [];
-        var rowOutput = "<tr>";
-        //var render_data = document.getElementById("render_data");
-		
-		for (var i=0; i < rs.rows.length; i++) {
-		  if(lasttitle.indexOf(rs.rows.item(i).input_name) == -1){
-			  rowOutput += renderCapDatahead(rs.rows.item(i));
-			  lasttitle.push(rs.rows.item(i).input_name);
-		  }
-
-        }
-		
-		rowOutput += "</tr><tr>";
-		
-        for (var j=0; j < rs.rows.length; j++) {
-		
-		  if(lastsub == rs.rows.item(j).user_submission_num){
-			  rowOutput += renderCapDataRow(rs.rows.item(j));
-			  lastsub = rs.rows.item(j).user_submission_num;
-			  total_subs++;
-		  }
-		  else{
-			  rowOutput += "</tr>";
-			  rowOutput += "<tr>";
-			  rowOutput += renderCapDataRow(rs.rows.item(j));
-			  lastsub = rs.rows.item(j).user_submission_num;
-			  total_subs++;
-		  }
-        }
-        rowOutput += "</tr>";
-        //render_data.innerHTML = rowOutput;
-		$("#render_data").html('').append(rowOutput).trigger('create');
-		$("#totalSubs").html('').append(total_subs).trigger('create');
-      }
-	  
-	  */
 	  
 	  function loadCurrentUserId(tx, rs) {
         var rowOutput = "";
