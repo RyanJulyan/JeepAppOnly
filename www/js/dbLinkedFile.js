@@ -640,7 +640,7 @@
         }
 		rowOutput += '</fieldset>';
 		$("#select_inputs_area").html('').append(rowOutput).trigger('create');
-		
+		$.mobile.loading( "hide" );
       }
 	  
 	  function loadAllCapData(tx, rs) {
@@ -898,12 +898,26 @@
 					var confirmloadServProject = confirm("Get the projects information from the server?\nTo ensure that you get the latest projects");
 		
 					if (confirmloadServProject == true) {
-						loadServProject();
-						loadServAdmin();
-						loadServDataType();
-						loadServInputInfo();
-						loadServProjInput();
-						loadServSuperUser();
+						theme = "d" || $.mobile.loader.prototype.options.theme,
+						msgText = "Downloading Information From Server"  || $.mobile.loader.prototype.options.text,
+						textVisible = "true" || $.mobile.loader.prototype.options.textVisible,
+						textonly = "false";
+						html = "";
+						$.mobile.loading( "show", {
+								text: msgText,
+								textVisible: textVisible,
+								theme: theme,
+								textonly: textonly,
+								html: html
+						});
+						setTimeout(function(){
+							loadServAdmin();
+							loadServDataType();
+							loadServInputInfo();
+							loadServProjInput();
+							loadServSuperUser();
+							loadServProject();
+						},100);
 					} else {
 						alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
 					}
@@ -1370,6 +1384,7 @@
 			},
 			error:function(xhr){
 				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				
 			}
 		});
 		
