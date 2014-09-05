@@ -9,13 +9,13 @@
 	  var fieldset_id = 1;
 	  
 	  // Local Location
-       var url_extention = "include/";
+      // var url_extention = "include/";
 	  
 	  // Server Live AppOnly Location
 	  // var url_extention = "http://jeep.mi-project.info/apponly/include/";
 	  
 	  // Server Live App Location
-	  // var url_extention = "http://jeep.mi-project.info/include/";
+	   var url_extention = "http://jeep.mi-project.info/include/";
 	  
       jeep.webdb.open = function() {
 		var shortname = "myDB";
