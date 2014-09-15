@@ -76,8 +76,13 @@
 				  document.getElementById('lat').value = position.coords.latitude;
 				  document.getElementById('long').value = position.coords.longitude;
 			  });
-		  } else { 
-			  alert("Geolocation is not supported by this browser.");
+		  } else {
+			  if(navigator.notification){
+					navigator.notification.alert("Geolocation is not supported by this Device", alertDismissed, "Geolocation Error", "OK");
+				}
+				else{
+			  		alert("Geolocation is not supported by this Device.");
+				}
 		  }
 		  latitude = document.getElementById('lat').value;
 		  longitude = document.getElementById('long').value;		  
@@ -151,7 +156,13 @@
 			);
 			
          });
-		 alert("New Input Type: " + dataType + " Added");
+		 
+		 if(navigator.notification){
+			navigator.notification.alert("New Input Type: " + dataType + " Added", alertDismissed, "New Input Type", "Great");
+		 }
+		 else{
+		 	alert("New Input Type: " + dataType + " Added");
+		 }
       }
 	  
 	  jeep.webdb.addInputInfo = function(dataTypeID,inputLabel,inputRequired,inputName) {
@@ -166,8 +177,12 @@
 			);
 			
          });
-		 
-		 alert("New Input: " + inputLabel + " Created");
+		 if(navigator.notification){
+			navigator.notification.alert("New Input: " + inputLabel + " Created", alertDismissed, "New Input Information", "Great");
+		 }
+		 else{
+		 	alert("New Input: " + inputLabel + " Created");
+		 }
       }
 	  
 	  jeep.webdb.addProjectInput = function(inputInfoID,projectID, viewpos) {
@@ -207,8 +222,12 @@
 			);
 			
          });
-		 
-		 alert("Project " + name + " Added, Starting On: " + start_date);
+		 if(navigator.notification){
+			navigator.notification.alert("Project " + name + " Added, Starting On: " + start_date, alertDismissed, "New Project Created", "Continue");
+		 }
+		 else{
+		 	alert("Project " + name + " Added, Starting On: " + start_date);
+		 }
       }
 	  
 	  jeep.webdb.addProjectDataCapture = function(proj_input_id, user_id, user_submission_num, project_id, value, cur_lat, cur_long) {
@@ -385,7 +404,88 @@
       }
       
       jeep.webdb.onError = function(tx, e) {
-        alert("There has been an error: " + e.message);
+		  
+		  if (e == 0){
+				// UNKNOWN_ERR
+				if(navigator.notification){
+					navigator.notification.alert("The transaction failed for reasons unrelated to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				 }
+				 else{
+					alert("The transaction failed for reasons unrelated to the database. \nTry Closing the App and Downloading the projects again");
+				 }
+				
+			}
+			else if(e == 1){
+				// DATABASE_ERR
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed for database reasons. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				 }
+				 else{
+					alert("The statement failed for database reasons. \nTry Closing the App and Downloading the projects again");
+				 }
+			}
+			else if (e == 2) {
+				// Version number mismatch.
+				if(navigator.notification){
+					navigator.notification.alert("Invalid database version. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Invalid database version. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else if(e == 3){
+				// TOO_LARGE_ERR
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because the data returned from the database was too large. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because the data returned from the database was too large. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else if(e == 4){
+				// QUOTA_ERR
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else if(e == 5){
+				// SYNTAX_ERR
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else if(e == 6){
+				// CONSTRAINT_ERR
+				if(navigator.notification){
+					navigator.notification.alert("Statement failed due to a constraint failure. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Statement failed due to a constraint failure. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else if(e == 7){
+				// TIMEOUT_ERR
+				if(navigator.notification){
+					navigator.notification.alert("A lock for the transaction could not be obtained in a reasonable time. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("A lock for the transaction could not be obtained in a reasonable time. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else {
+				if(navigator.notification){
+					navigator.notification.alert("Unknown error "+e+". \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Unknown error "+e+". \nTry Closing the App and Downloading the projects again");
+				}
+			}
       }
       
       jeep.webdb.onSuccess = function(tx, r) {
@@ -877,7 +977,12 @@
       function init() {
 		try {
 			if (!window.openDatabase) {
-				alert('Databases are not supported in this browser.');
+			 if(navigator.notification){
+				navigator.notification.alert("Databases are not supported in this device", alertDismissed, "Local Database Error", "OK");
+			 }
+			 else{
+				alert('Databases are not supported in this device.');
+			 }
 			} else {
 				jeep.webdb.open();
 				jeep.webdb.createTables();
@@ -894,38 +999,84 @@
 			// Error handling code goes here.
 			if (e == 0){
 				// UNKNOWN_ERR
-				alert("The transaction failed for reasons unrelated to the database.");
+				if(navigator.notification){
+					navigator.notification.alert("The transaction failed for reasons unrelated to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				 }
+				 else{
+					alert("The transaction failed for reasons unrelated to the database. \nTry Closing the App and Downloading the projects again");
+				 }
+				
 			}
 			else if(e == 1){
 				// DATABASE_ERR
-				alert("The statement failed for database reasons.");
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed for database reasons. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				 }
+				 else{
+					alert("The statement failed for database reasons. \nTry Closing the App and Downloading the projects again");
+				 }
 			}
 			else if (e == 2) {
 				// Version number mismatch.
-				alert("Invalid database version.");
+				if(navigator.notification){
+					navigator.notification.alert("Invalid database version. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Invalid database version. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else if(e == 3){
 				// TOO_LARGE_ERR
-				alert("The statement failed because the data returned from the database was too large.");
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because the data returned from the database was too large. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because the data returned from the database was too large. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else if(e == 4){
 				// QUOTA_ERR
-				alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database.");
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else if(e == 5){
 				// SYNTAX_ERR
-				alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database.");
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else if(e == 6){
 				// CONSTRAINT_ERR
-				alert("Statement failed due to a constraint failure.");
+				if(navigator.notification){
+					navigator.notification.alert("Statement failed due to a constraint failure. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Statement failed due to a constraint failure. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else if(e == 7){
 				// TIMEOUT_ERR
-				alert("A lock for the transaction could not be obtained in a reasonable time.");
+				if(navigator.notification){
+					navigator.notification.alert("A lock for the transaction could not be obtained in a reasonable time. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("A lock for the transaction could not be obtained in a reasonable time. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else {
-				alert("Unknown error "+e+".");
+				if(navigator.notification){
+					navigator.notification.alert("Unknown error "+e+". \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Unknown error "+e+". \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			return;
 		}
@@ -970,8 +1121,12 @@
 			inputsSelected += select_inputs_checkboxes[i].value + '\n';
 		  }
 		}
-		
-		alert("The Following Inputs have been added to "+ $("#project_select option:selected").html()+" \n " + inputsSelected);
+		if(navigator.notification){
+			navigator.notification.alert("The Following Inputs have been added to "+ $("#project_select option:selected").html()+" \n " + inputsSelected, alertDismissed, "Input Added", "Continue");
+		}
+		else{
+			alert("The Following Inputs have been added to "+ $("#project_select option:selected").html()+" \n " + inputsSelected);
+		}
       }
 	  
 	  function addProject() {
@@ -1003,7 +1158,12 @@
 			email = '';
 		}
 		else{
-			alert("Passwords do not match");
+			if(navigator.notification){
+				navigator.notification.alert("Passwords do not match", alertDismissed, "Passwords Error", "OK");
+			}
+			else{
+				alert("Passwords do not match");
+			}
 		}
       }
 	  
@@ -1022,7 +1182,12 @@
 			email = '';
 		}
 		else{
-			alert("Passwords do not match");
+			if(navigator.notification){
+				navigator.notification.alert("Passwords do not match", alertDismissed, "Passwords Error", "OK");
+			}
+			else{
+				alert("Passwords do not match");
+			}
 		}
       }
 	  
@@ -1060,7 +1225,14 @@
 		if(correct == true){
 			$("#cur_subs").html('').append(user_submission_num).trigger('create');
 			user_submission_num++;
-			alert("Submission Saved");
+			
+			if(navigator.notification){
+				navigator.notification.alert("Submission Saved", alertDismissed, "Information Captured", "Great");
+			}
+			else{
+				alert("Submission Saved");
+			}
+			
 			document.getElementById('userSubnum').value = user_submission_num;
 			var elements = document.getElementById('projectItems').getElementsByTagName('input');
 
@@ -1154,12 +1326,41 @@
 				document.getElementById("end_date").value = "";
 				
 				$.mobile.loading( "hide" );
-				alert("Uploaded to Server");
+				if(navigator.notification){
+					navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
+				}
+				else{
+					alert("Uploaded to Server");
+				}
 				$.mobile.changePage( "#link_input_to_proj", { transition: "flow", changeHash: false });
 			},
 			error:function(xhr){
 				$.mobile.loading( "hide" );
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1192,10 +1393,38 @@
 				loadServDataType();
 				jeep.webdb.getAllDataTypes(loadAllDataTypes);
 				data_type = '';
-				alert("Uploaded to Server");
+				if(navigator.notification){
+					navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
+				}
+				else{
+					alert("Uploaded to Server");
+				}
 			},
 			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1236,10 +1465,38 @@
 				jeep.webdb.getAllInputInfo(loadAllInputInfo);
 				input_label = '';
 				input_group_name = '';
-				alert("Uploaded to Server");
+				if(navigator.notification){
+					navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
+				}
+				else{
+					alert("Uploaded to Server");
+				}
 			},
 			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1285,7 +1542,12 @@
     		complete   : function() {$.mobile.loading('hide')},
 			success: function(data, textStatus, jqXHR){
 				console.log(data);
-				alert("Uploaded to Server");
+				if(navigator.notification){
+					navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
+				}
+				else{
+					alert("Uploaded to Server");
+				}
 				loadServProjInput();
 				setTimeout(function(){
 					$.mobile.changePage( "#start", { transition: "flow", changeHash: false });
@@ -1294,7 +1556,30 @@
 				//addProjectInput
 			},
 			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1350,7 +1635,30 @@
 				
 			},
 			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 				
 			}
 		});
@@ -1396,7 +1704,30 @@
 				});
 			},
 			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1440,7 +1771,30 @@
 				});
 			},
 			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1483,7 +1837,30 @@
 				});
 			},
 			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1526,7 +1903,30 @@
 				});
 			},
 			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1569,7 +1969,30 @@
 				});
 			},
 			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1611,7 +2034,30 @@
 				$('#User_Sync').html('').append('Users Have Been Uploaded').trigger('create');
 			},
 			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1646,7 +2092,7 @@
 			beforeSend : function() {$.mobile.loading('show')},
     		complete   : function() {$.mobile.loading('hide')},
 			success: function(data, textStatus, jqXHR){
-				/*
+				
 				jeep.webdb.open();
 				jeep.webdb.db.transaction(function(tx) {
 					tx.executeSql("DROP TABLE user", []);
@@ -1654,12 +2100,35 @@
 					tx.executeSql("DROP TABLE project_data_capture", []);
 					tx.executeSql("CREATE TABLE IF NOT EXISTS project_data_capture('id' INTEGER PRIMARY KEY ASC, 'proj_input_id' INTEGER, 'user_id' INTEGER, 'user_submission_num' INTEGER, 'project_id' INTEGER, 'value' VARCHAR(255), 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_created' DATETIME)", []);
 				});
-				*/
+				
 				$('#Data_Sync').html('').append('Captured Submissions Have Been Uploaded').trigger('create');
 				
 			},
 			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				if(xhr.status == 404){
+					if(navigator.notification){
+						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+					}
+					else{
+						alert("Server Error Page Not Found");
+					}
+				}
+				if(xhr.status == 200){
+					if(navigator.notification){
+						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+					}
+				}
+				
+				if(navigator.notification){
+					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+				}
+				else{
+					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+				}
 			}
 		});
 		
@@ -1761,12 +2230,22 @@
 								loadServProject();
 							},100);
 						} else {
-							alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
+							if(navigator.notification){
+								navigator.notification.alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...", alertDismissed, "Download Error", "OK");
+							}
+							else{
+								alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
+							}
 						}
 				
 					
 					}
 					else{
-						alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device");
+						if(navigator.notification){
+							navigator.notification.alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device", alertDismissed, "Offline", "OK");
+						}
+						else{
+							alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device");
+						}
 					}
 				}
