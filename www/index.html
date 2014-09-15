@@ -12,6 +12,32 @@
 <script src="js/jquery_mobile.js"></script>
 <script>
 	var allowLog = false;
+	// Wait for device API libraries to load
+    //
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // device APIs are available
+    //
+    function onDeviceReady() {
+        // Empty
+    }
+
+    // alert dialog dismissed
+        function alertDismissed() {
+            // do something
+        }
+
+    // Show a custom alertDismissed
+    //
+    function showAlert() {
+        navigator.notification.alert(
+            'You are the winner!',  // message
+            alertDismissed,         // callback
+            'Game Over',            // title
+            'Done'                  // buttonName
+        );
+    }
+	
 	$(document).ready(function(){
 		
 		$("#start_go_to_admin").click(function(event){
@@ -64,12 +90,7 @@
 			var user_log = document.getElementById('user_cap_val').value;
 			if(user_log == "" || user_log == null){
 				event.preventDefault();
-				navigator.notification.alert(
-					'You are the winner!',  // message
-					alertDismissed,         // callback
-					'Game Over',            // title
-					'Done'                  // buttonName
-				);
+				showAlert();
 				//navigator.notification.alert("Please Input Your Name To Capture Data", alertDismissed, "User Not Entered", "OK");
 			}
 		});
@@ -129,9 +150,8 @@
 		})
 		
 	});
-	function alertDismissed() {
-		// do something
-	}
+	
+
 </script>
 </head>
 
