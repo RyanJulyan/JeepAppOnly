@@ -29,17 +29,12 @@
 	
 	function onConfirm(buttonIndex) {
 		alert('You selected button ' + buttonIndex);
-	}
-	
-	// Show a custom confirmation dialog
-	//
-	function showConfirm() {
-		navigator.notification.confirm(
-			'You are the winner!', // message
-			 onConfirm,            // callback to invoke with index of button pressed
-			'Game Over',           // title
-			['Restart','Exit']         // buttonLabels
-		);
+		if (buttonIndex == 1) {
+			latLong();
+		} else {
+			latitude = "User Declined Location";
+			longitude = "User Declined Location";
+		}
 	}
 
 </script>
@@ -129,7 +124,7 @@
 		$(document).on("pageshow","#user",function(){ // When entering user
 			
 			if(navigator.notification){
-				showConfirm();
+				navigator.notification.confirm('Allow Us To Use Your Location?', onConfirm, 'Get User Location', ['Yes','No']);
 			}
 			else{
 				// run geolocation for form to be populated
