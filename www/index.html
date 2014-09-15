@@ -35,7 +35,12 @@
 			if(allowLog != true){
 				console.log("Prvent check fired");
 				event.preventDefault();
-				alert("Your Username or Password do not match");
+				if(navigator.notification){
+					navigator.notification.alert("Your Username or Password do not match", alertDismissed, "Error", "Try Again");
+				}
+				else{
+					alert("Your Username or Password do not match");
+				}
 				$("#admin_pass_log").val('');
 			}
 			else{
@@ -48,8 +53,10 @@
 		$("#user_log_out").click(function(event){
 			jeep.webdb.open();
 			jeep.webdb.setUserLogOut();
-			getAllUsers();
-			getAllUserDataCap();			
+			if(navigator.onLine){
+				getAllUsers();
+				getAllUserDataCap();
+			}
 		});
 		
 		
@@ -62,7 +69,12 @@
 			var user_log = document.getElementById('user_cap_val').value;
 			if(user_log == "" || user_log == null){
 				event.preventDefault();
-				alert("Please Input Your Name To Capture Data");
+				if(navigator.notification){
+					navigator.notification.alert("Please Input Your Name To Capture Data", alertDismissed, "User Not Entered", "OK");
+				}
+				else{
+					alert("Please Input Your Name To Capture Data");
+				}
 			}
 		});
 		
@@ -78,6 +90,19 @@
 		$(document).on("pagebeforeshow","#user",function(){ // When entering user
 			jeep.webdb.open();
 			jeep.webdb.getProjectLogo(loadProjectLogo);
+			
+		});
+		
+		$(document).on("pageshow","#user",function(){ // When entering user
+			// run geolocation for form to be populated
+			var confirmLocationUse = confirm("Activate Your Location And Allow Us To Use It?");
+			
+			if (confirmLocationUse == true) {
+				latLong();
+			} else {
+				latitude = "User Declined Location";
+				longitude = "User Declined Location";
+			}
 		});
 		
 		$(document).on("pagebeforeshow","#view_data",function(){ // When entering view_data
@@ -108,6 +133,9 @@
 		})
 		
 	});
+	function alertDismissed() {
+		// do something
+	}
 </script>
 </head>
 
@@ -123,6 +151,7 @@
 <div id="start" data-role="page" data-theme="d">
 	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false">
     	<div style="background-color:#FFF; height:18px;"></div>
+         <a href="#" data-icon="arrow-d" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="getAllData();">Download Projects</a>
 		<h1>
 			Jeep
 		</h1>
@@ -163,10 +192,10 @@
 <div id="choose_action" data-role="page" data-theme="d">
 	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
     	<div style="background-color:#FFF; height:18px;"></div>
-		<h1>
+		<a href="#admin" data-icon="lock" data-iconpos="right" class="log_out" style="margin-top:18px;">Logout</a>
+        <h1>
 			Jeep
 		</h1>
-        <a href="#admin" data-icon="lock" data-iconpos="right" class="ui-btn-right log_out" style="margin-top:18px;">Logout</a>
 	</div>
 	<div class="infoBox" data-role="main" data-theme="d">
 		<h2 class="headingStyle">Choose Action</h2>
