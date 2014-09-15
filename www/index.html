@@ -31,12 +31,7 @@
     // Show a custom alertDismissed
     //
     function showAlert() {
-        navigator.notification.alert(
-            'You are the winner!',  // message
-            alertDismissed,         // callback
-            'Game Over',            // title
-            'Done'                  // buttonName
-        );
+        
     }
 
 </script>
@@ -95,7 +90,12 @@
 			if(user_log == "" || user_log == null){
 				event.preventDefault();
 				if(navigator.notification){
-					showAlert();
+					navigator.notification.alert(
+						'You are the winner!',  // message
+						alertDismissed,         // callback
+						'Game Over',            // title
+						'Done'                  // buttonName
+					);
 				}
 				//navigator.notification.alert("Please Input Your Name To Capture Data", alertDismissed, "User Not Entered", "OK");
 			}
