@@ -1278,861 +1278,968 @@
 	  
 	  function setServProject(){
 		
+		if(navigator.onLine){
 		
-		var admin_id = document.getElementById("admin_id").value;
-		
-		var name = document.getElementById("project_name").value;
-		var big_logo = document.getElementById("big_logo").files[0];
-		var small_logo = document.getElementById("small_logo").files[0];
-		var project_logo = document.getElementById("project_logo").files[0];
-		var background = document.getElementById("background").files[0];
-		var start_date = document.getElementById("start_date").value;
-		var end_date = document.getElementById("end_date").value;
-		
-		var formdata = new FormData();
-		
-		formdata.append("admin_id", admin_id);
-		
-		formdata.append("name", name);
-		formdata.append("big_logo", big_logo);
-		formdata.append("small_logo", small_logo);
-		formdata.append("project_logo", project_logo);
-		formdata.append("background", background);
-		formdata.append("start_date", start_date);
-		formdata.append("end_date", end_date);
-		
-		console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_project.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				//console.log(data, textStatus, jqXHR);
-				loadServProject();
-				document.getElementById("project_name").value = "";
-				document.getElementById("big_logo").files[0] = "";
-				document.getElementById("small_logo").files[0] = "";
-				document.getElementById("project_logo").files[0] = "";
-				document.getElementById("background").files[0] = "";
-				document.getElementById("start_date").value = "";
-				document.getElementById("end_date").value = "";
-				
-				$.mobile.loading( "hide" );
-				if(navigator.notification){
-					navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
-				}
-				else{
-					alert("Uploaded to Server");
-				}
-				$.mobile.changePage( "#link_input_to_proj", { transition: "flow", changeHash: false });
-			},
-			error:function(xhr){
-				$.mobile.loading( "hide" );
-				
-				if(xhr.status == 404){
+			var admin_id = document.getElementById("admin_id").value;
+			
+			var name = document.getElementById("project_name").value;
+			var big_logo = document.getElementById("big_logo").files[0];
+			var small_logo = document.getElementById("small_logo").files[0];
+			var project_logo = document.getElementById("project_logo").files[0];
+			var background = document.getElementById("background").files[0];
+			var start_date = document.getElementById("start_date").value;
+			var end_date = document.getElementById("end_date").value;
+			
+			var formdata = new FormData();
+			
+			formdata.append("admin_id", admin_id);
+			
+			formdata.append("name", name);
+			formdata.append("big_logo", big_logo);
+			formdata.append("small_logo", small_logo);
+			formdata.append("project_logo", project_logo);
+			formdata.append("background", background);
+			formdata.append("start_date", start_date);
+			formdata.append("end_date", end_date);
+			
+			console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_project.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					//console.log(data, textStatus, jqXHR);
+					loadServProject();
+					document.getElementById("project_name").value = "";
+					document.getElementById("big_logo").files[0] = "";
+					document.getElementById("small_logo").files[0] = "";
+					document.getElementById("project_logo").files[0] = "";
+					document.getElementById("background").files[0] = "";
+					document.getElementById("start_date").value = "";
+					document.getElementById("end_date").value = "";
+					
+					$.mobile.loading( "hide" );
 					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
 					}
 					else{
-						alert("Server Error Page Not Found");
+						alert("Uploaded to Server");
 					}
-				}
-				if(xhr.status == 200){
+					$.mobile.changePage( "#link_input_to_proj", { transition: "flow", changeHash: false });
+				},
+				error:function(xhr){
+					$.mobile.loading( "hide" );
+					
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
 					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
 					}
 					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 					}
 				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}
 		
 		
 	  }
 	  
 	  function setServDataType(){
 		
-		var data_type = document.getElementById("data_type").value;
-		
-		var formdata = new FormData();
-		
-		formdata.append("data_type", data_type);
-		
-		console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_data_type.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				loadServDataType();
-				jeep.webdb.getAllDataTypes(loadAllDataTypes);
-				data_type = '';
-				if(navigator.notification){
-					navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
-				}
-				else{
-					alert("Uploaded to Server");
-				}
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
+		if(navigator.onLine){
+			var data_type = document.getElementById("data_type").value;
+			
+			var formdata = new FormData();
+			
+			formdata.append("data_type", data_type);
+			
+			console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_data_type.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					loadServDataType();
+					jeep.webdb.getAllDataTypes(loadAllDataTypes);
+					data_type = '';
 					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
 					}
 					else{
-						alert("Server Error Page Not Found");
+						alert("Uploaded to Server");
 					}
-				}
-				if(xhr.status == 200){
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
 					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
 					}
 					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 					}
 				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+			});
+		
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
-		
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}
 		
 	  }
 	  
 	  function setServNewInput(){
 		
-		var data_type_select = document.getElementById("data_type_select").value;
-		var input_label = document.getElementById("input_label").value;
-		var input_group_name = document.getElementById("input_group_name").value;
-		var rec_feild = document.getElementById("rec_feild").value;
-		
-		var formdata = new FormData();
-		
-		formdata.append("data_type_select", data_type_select);
-		formdata.append("input_label", input_label);
-		formdata.append("input_group_name", input_group_name);
-		formdata.append("rec_feild", rec_feild);
-		
-		console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_input_info.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				//console.log(data, textStatus, jqXHR);
-				loadServInputInfo();
-				jeep.webdb.getAllInputInfo(loadAllInputInfo);
-				input_label = '';
-				input_group_name = '';
-				if(navigator.notification){
-					navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
-				}
-				else{
-					alert("Uploaded to Server");
-				}
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
+		if(navigator.onLine){
+			var data_type_select = document.getElementById("data_type_select").value;
+			var input_label = document.getElementById("input_label").value;
+			var input_group_name = document.getElementById("input_group_name").value;
+			var rec_feild = document.getElementById("rec_feild").value;
+			
+			var formdata = new FormData();
+			
+			formdata.append("data_type_select", data_type_select);
+			formdata.append("input_label", input_label);
+			formdata.append("input_group_name", input_group_name);
+			formdata.append("rec_feild", rec_feild);
+			
+			console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_input_info.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					//console.log(data, textStatus, jqXHR);
+					loadServInputInfo();
+					jeep.webdb.getAllInputInfo(loadAllInputInfo);
+					input_label = '';
+					input_group_name = '';
 					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
 					}
 					else{
-						alert("Server Error Page Not Found");
+						alert("Uploaded to Server");
 					}
-				}
-				if(xhr.status == 200){
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
 					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
 					}
 					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 					}
 				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+			});
+		
+	  	}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
-		
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}
 		
 	  }
 	  
 	  function setServProjInput(){
 		
-		var project_select = document.getElementById("project_select").value;
+		if(navigator.onLine){
 		
-		var select_inputs_checkboxes = document.getElementsByName('select_inputs');
-		
-		var select_inputs_checkboxes_arr = [];
-		
-		
-		for (var i=0;i<select_inputs_checkboxes.length;i++) {
-		  if (select_inputs_checkboxes[i].checked){
-			select_inputs_checkboxes_arr.push(select_inputs_checkboxes[i].value);
-			select_inputs_checkboxes_arr.push(select_inputs_checkboxes[i].getAttribute('data-viewpos'));
-		  }
-		}
-		
-		var json_arr = JSON.stringify(select_inputs_checkboxes_arr);
-		
-		var formdata = new FormData();
-		
-		formdata.append("project_select", project_select);
-		formdata.append("select_inputs_checkboxes_arr", select_inputs_checkboxes_arr);
-		
-		console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_proj_input.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				console.log(data);
-				if(navigator.notification){
-					navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
-				}
-				else{
-					alert("Uploaded to Server");
-				}
-				loadServProjInput();
-				setTimeout(function(){
-					$.mobile.changePage( "#start", { transition: "flow", changeHash: false });
-				}, 100);
-				
-				//addProjectInput
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
-					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
-					}
-					else{
-						alert("Server Error Page Not Found");
-					}
-				}
-				if(xhr.status == 200){
-					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
-					}
-					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
-					}
-				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+			var project_select = document.getElementById("project_select").value;
+			
+			var select_inputs_checkboxes = document.getElementsByName('select_inputs');
+			
+			var select_inputs_checkboxes_arr = [];
+			
+			
+			for (var i=0;i<select_inputs_checkboxes.length;i++) {
+			  if (select_inputs_checkboxes[i].checked){
+				select_inputs_checkboxes_arr.push(select_inputs_checkboxes[i].value);
+				select_inputs_checkboxes_arr.push(select_inputs_checkboxes[i].getAttribute('data-viewpos'));
+			  }
 			}
-		});
-		
-		
+			
+			var json_arr = JSON.stringify(select_inputs_checkboxes_arr);
+			
+			var formdata = new FormData();
+			
+			formdata.append("project_select", project_select);
+			formdata.append("select_inputs_checkboxes_arr", select_inputs_checkboxes_arr);
+			
+			console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_proj_input.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					console.log(data);
+					if(navigator.notification){
+						navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
+					}
+					else{
+						alert("Uploaded to Server");
+					}
+					loadServProjInput();
+					setTimeout(function(){
+						$.mobile.changePage( "#start", { transition: "flow", changeHash: false });
+					}, 100);
+					
+					//addProjectInput
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}		
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
+			}
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}
+					
 		
 	  }
 	  
 	  
 	function loadServProject(){
 		
-		// alert("loadServProject Fired");
-		
-		var project;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_project.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-			complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				project = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE project", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS project('id' INTEGER PRIMARY KEY ASC, 'admin_id' INTEGER, 'name' VARCHAR(255), 'big_logo' VARCHAR(255), 'small_logo' VARCHAR(255), 'project_logo' VARCHAR(255), 'background' VARCHAR(255), 'start_date' DATETIME, 'end_date' DATETIME, 'date_time_created' DATETIME)", []);
-				});
-				
-				
-				$.each(project, function(idx, obj) {
+		if(navigator.onLine){
+			// alert("loadServProject Fired");
+			
+			var project;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_project.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					project = data;
 					
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO project(id, admin_id, name, big_logo, small_logo, project_logo, background, start_date, end_date, date_time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-						[obj.id, obj.admin_id, obj.name, obj.big_logo, obj.small_logo, obj.project_logo, obj.background, obj.start_date, obj.end_date, obj.date_time_created],
-						console.log("Synced Project"),
-						console.log("Project Sync Failed")
-					);
-					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE project", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS project('id' INTEGER PRIMARY KEY ASC, 'admin_id' INTEGER, 'name' VARCHAR(255), 'big_logo' VARCHAR(255), 'small_logo' VARCHAR(255), 'project_logo' VARCHAR(255), 'background' VARCHAR(255), 'start_date' DATETIME, 'end_date' DATETIME, 'date_time_created' DATETIME)", []);
 					});
 					
-				});
-				
-				jeep.webdb.getAllprojectItems(loadprojectItems);
-				jeep.webdb.getAllProjects(loadAllProjectsForUser);
-				jeep.webdb.getAllDataTypes(loadAllDataTypes);
-				jeep.webdb.getAllProjects(loadAllProjects);
-				jeep.webdb.getAllInputInfo(loadAllInputInfo);
-				
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
+					
+					$.each(project, function(idx, obj) {
+						
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO project(id, admin_id, name, big_logo, small_logo, project_logo, background, start_date, end_date, date_time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+							[obj.id, obj.admin_id, obj.name, obj.big_logo, obj.small_logo, obj.project_logo, obj.background, obj.start_date, obj.end_date, obj.date_time_created],
+							console.log("Synced Project"),
+							console.log("Project Sync Failed")
+						);
+						
+						});
+						
+					});
+					
+					jeep.webdb.getAllprojectItems(loadprojectItems);
+					jeep.webdb.getAllProjects(loadAllProjectsForUser);
+					jeep.webdb.getAllDataTypes(loadAllDataTypes);
+					jeep.webdb.getAllProjects(loadAllProjects);
+					jeep.webdb.getAllInputInfo(loadAllInputInfo);
+					
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
 					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
 					}
 					else{
-						alert("Server Error Page Not Found");
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 					}
+					
 				}
-				if(xhr.status == 200){
-					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
-					}
-					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
-					}
-				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
-				
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}
 		
 		
 	}
 	
 	function loadServAdmin(){
-		
-		var admin;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_admin.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				admin = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE admin", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS admin('id' INTEGER PRIMARY KEY ASC, 'super_user_id' INTEGER, 'user_name' VARCHAR(255), 'password' VARCHAR(255), 'active' INTEGER, 'email' VARCHAR(255))", []);
-				});
-				
-				
-				$.each(admin, function(idx, obj) {
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO admin(id, super_user_id, user_name, password, active, email) VALUES (?, ?, ?, ?, ?, ?)",
-						[obj.id, obj.super_user_id, obj.user_name, obj.password , obj.active , obj.email],
-						console.log("Synced Admin"),
-						console.log("Admin Sync Failed")
-					);
+		if(navigator.onLine){
+			var admin;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_admin.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					admin = data;
 					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE admin", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS admin('id' INTEGER PRIMARY KEY ASC, 'super_user_id' INTEGER, 'user_name' VARCHAR(255), 'password' VARCHAR(255), 'active' INTEGER, 'email' VARCHAR(255))", []);
 					});
 					
-				});
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
+					
+					$.each(admin, function(idx, obj) {
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO admin(id, super_user_id, user_name, password, active, email) VALUES (?, ?, ?, ?, ?, ?)",
+							[obj.id, obj.super_user_id, obj.user_name, obj.password , obj.active , obj.email],
+							console.log("Synced Admin"),
+							console.log("Admin Sync Failed")
+						);
+						
+						});
+						
+					});
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
 					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
 					}
 					else{
-						alert("Server Error Page Not Found");
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 					}
 				}
-				if(xhr.status == 200){
-					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
-					}
-					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
-					}
-				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}
 	  }
 	  
 	  function loadServDataType(){
 		  
-		var data_type;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_data_type.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				data_type = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE data_type", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS data_type('id' INTEGER PRIMARY KEY ASC, 'data_type' VARCHAR(255))", []);
-				});
-				
-				
-				$.each(data_type, function(idx, obj) {
+		  if(navigator.onLine){
+			var data_type;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_data_type.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					data_type = data;
 					
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO data_type(id, data_type) VALUES (?, ?)",
-						[obj.id, obj.data_type],
-						console.log("Synced Data Type"),
-						console.log("Data Type Sync Failed")
-					);
-					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE data_type", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS data_type('id' INTEGER PRIMARY KEY ASC, 'data_type' VARCHAR(255))", []);
 					});
 					
-				});
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
+					
+					$.each(data_type, function(idx, obj) {
+						
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO data_type(id, data_type) VALUES (?, ?)",
+							[obj.id, obj.data_type],
+							console.log("Synced Data Type"),
+							console.log("Data Type Sync Failed")
+						);
+						
+						});
+						
+					});
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
 					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
 					}
 					else{
-						alert("Server Error Page Not Found");
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 					}
 				}
-				if(xhr.status == 200){
-					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
-					}
-					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
-					}
-				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}
 	  }
 	  
 	  function loadServInputInfo(){
-		var input_info;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_input_info.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				input_info = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE input_info", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS input_info('id' INTEGER PRIMARY KEY ASC, 'data_type_id' INTEGER, 'label' VARCHAR(255), 'required' INTEGER, 'input_name' VARCHAR(255))", []);
-				});
-				
-				
-				$.each(input_info, function(idx, obj) {
+		if(navigator.onLine){
+			var input_info;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_input_info.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					input_info = data;
 					
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO input_info(id, data_type_id, label, required, input_name) VALUES (?, ? , ?, ?, ?)",
-						[obj.id, obj.data_type_id, obj.label, obj.required, obj.input_name],
-						console.log("Synced Input Info"),
-						console.log("Input Info Sync Failed")
-					);
-					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE input_info", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS input_info('id' INTEGER PRIMARY KEY ASC, 'data_type_id' INTEGER, 'label' VARCHAR(255), 'required' INTEGER, 'input_name' VARCHAR(255))", []);
 					});
 					
-				});
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
+					
+					$.each(input_info, function(idx, obj) {
+						
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO input_info(id, data_type_id, label, required, input_name) VALUES (?, ? , ?, ?, ?)",
+							[obj.id, obj.data_type_id, obj.label, obj.required, obj.input_name],
+							console.log("Synced Input Info"),
+							console.log("Input Info Sync Failed")
+						);
+						
+						});
+						
+					});
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
 					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
 					}
 					else{
-						alert("Server Error Page Not Found");
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 					}
 				}
-				if(xhr.status == 200){
-					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
-					}
-					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
-					}
-				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}
 		
 	  }
 	  
 	  function loadServProjInput(){
-		var proj_input;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_proj_input.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				proj_input = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE proj_input", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS proj_input('id' INTEGER PRIMARY KEY ASC, 'input_info_id' INTEGER, 'project_id' INTEGER, 'viewpos' INTEGER)", []);
-				});
-				
-				
-				$.each(proj_input, function(idx, obj) {
+		if(navigator.onLine){
+			var proj_input;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_proj_input.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					proj_input = data;
 					
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO proj_input(id, input_info_id, project_id, viewpos) VALUES (?, ?, ?, ?)",
-						[obj.id, obj.input_info_id, obj.project_id, obj.viewpos],
-						console.log("Synced Proj Input"),
-						console.log("Proj Input Sync Failed")
-					);
-					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE proj_input", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS proj_input('id' INTEGER PRIMARY KEY ASC, 'input_info_id' INTEGER, 'project_id' INTEGER, 'viewpos' INTEGER)", []);
 					});
 					
-				});
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
+					
+					$.each(proj_input, function(idx, obj) {
+						
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO proj_input(id, input_info_id, project_id, viewpos) VALUES (?, ?, ?, ?)",
+							[obj.id, obj.input_info_id, obj.project_id, obj.viewpos],
+							console.log("Synced Proj Input"),
+							console.log("Proj Input Sync Failed")
+						);
+						
+						});
+						
+					});
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
 					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
 					}
 					else{
-						alert("Server Error Page Not Found");
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 					}
 				}
-				if(xhr.status == 200){
-					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
-					}
-					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
-					}
-				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}
 	  }
 	  
 	  function loadServSuperUser(){
-		var super_user;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_super_user.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				super_user = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE super_user", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS super_user('id' INTEGER PRIMARY KEY ASC, 'user_name' VARCHAR(255), 'password' VARCHAR(255), 'email' VARCHAR(255))", []);
-				});
-				
-				
-				$.each(super_user, function(idx, obj) {
+		if(navigator.onLine){
+			var super_user;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_super_user.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					super_user = data;
 					
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO super_user(id, user_name, password, email) VALUES (?, ?, ?, ?)",
-						[obj.id, obj.username, obj.password, obj.email],
-						console.log("Synced Super User"),
-						console.log("Super User Sync Failed")
-					);
-					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE super_user", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS super_user('id' INTEGER PRIMARY KEY ASC, 'user_name' VARCHAR(255), 'password' VARCHAR(255), 'email' VARCHAR(255))", []);
 					});
 					
-				});
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
+					
+					$.each(super_user, function(idx, obj) {
+						
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO super_user(id, user_name, password, email) VALUES (?, ?, ?, ?)",
+							[obj.id, obj.username, obj.password, obj.email],
+							console.log("Synced Super User"),
+							console.log("Super User Sync Failed")
+						);
+						
+						});
+						
+					});
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
 					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
 					}
 					else{
-						alert("Server Error Page Not Found");
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
 					}
 				}
-				if(xhr.status == 200){
-					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
-					}
-					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
-					}
-				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
-		
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}		
 		
 	  }
 	  
 	  function loadAllUsers(tx, rs) {
-        var rowOutput = [];
-        for (var i=0; i < rs.rows.length; i++) {
-          rowOutput.push(renderAllUsers(rs.rows.item(i)));
-        }
-		
-		//AllUsers = JSON.stringify(rowOutput);
-		AllUsers = rowOutput;
-		//console.log(AllUsers);
-		
-		var formdata = new FormData();
-		
-		formdata.append("AllUsers", AllUsers);
-		
-		//console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_users.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				console.log(data);
-				//alert("Users Uploaded to Server");
-				
-				$('#User_Sync').html('').append('Users Have Been Uploaded').trigger('create');
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
-					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
-					}
-					else{
-						alert("Server Error Page Not Found");
-					}
-				}
-				if(xhr.status == 200){
-					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
-					}
-					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
-					}
-				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+        if(navigator.onLine){
+			var rowOutput = [];
+			for (var i=0; i < rs.rows.length; i++) {
+			  rowOutput.push(renderAllUsers(rs.rows.item(i)));
 			}
-		});
-		
+			
+			//AllUsers = JSON.stringify(rowOutput);
+			AllUsers = rowOutput;
+			//console.log(AllUsers);
+			
+			var formdata = new FormData();
+			
+			formdata.append("AllUsers", AllUsers);
+			
+			//console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_users.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					console.log(data);
+					//alert("Users Uploaded to Server");
+					
+					$('#User_Sync').html('').append('Users Have Been Uploaded').trigger('create');
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}		
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
+			}
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}
       }
 	  	  
 	  function loadAllUsersDataCap(tx, rs) {
-        var rowOutput = [];
-        for (var i=0; i < rs.rows.length; i++) {
-          rowOutput.push(renderAllUsersDataCap(rs.rows.item(i)));
-		  console.log(rs.rows.item[0]);
-        }
-		
-		//AllUsersDataCap = JSON.stringify(rowOutput);
-		AllUsersDataCap = rowOutput;
-		//console.log(AllUsersDataCap);
-		
-		var formdata = new FormData();
-		
-		formdata.append("AllUsersDataCap", AllUsersDataCap);
-		
-		//console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_data_cap.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE user", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS user('id' INTEGER PRIMARY KEY ASC, 'name' VARCHAR(255), 'date_time_in' DATETIME, 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_out' DATETIME)", []);
-					tx.executeSql("DROP TABLE project_data_capture", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS project_data_capture('id' INTEGER PRIMARY KEY ASC, 'proj_input_id' INTEGER, 'user_id' INTEGER, 'user_submission_num' INTEGER, 'project_id' INTEGER, 'value' VARCHAR(255), 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_created' DATETIME)", []);
-				});
-				
-				$('#Data_Sync').html('').append('Captured Submissions Have Been Uploaded').trigger('create');
-				
-			},
-			error:function(xhr){
-				if(xhr.status == 404){
-					if(navigator.notification){
-						navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
-					}
-					else{
-						alert("Server Error Page Not Found");
-					}
-				}
-				if(xhr.status == 200){
-					if(navigator.notification){
-						navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
-					}
-					else{
-						alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
-					}
-				}
-				
-				if(navigator.notification){
-					navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-				}
-				else{
-					alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-					//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				}
+        if(navigator.onLine){
+			var rowOutput = [];
+			for (var i=0; i < rs.rows.length; i++) {
+			  rowOutput.push(renderAllUsersDataCap(rs.rows.item(i)));
+			  console.log(rs.rows.item[0]);
 			}
-		});
-		
-		
+			
+			//AllUsersDataCap = JSON.stringify(rowOutput);
+			AllUsersDataCap = rowOutput;
+			//console.log(AllUsersDataCap);
+			
+			var formdata = new FormData();
+			
+			formdata.append("AllUsersDataCap", AllUsersDataCap);
+			
+			//console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_data_cap.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE user", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS user('id' INTEGER PRIMARY KEY ASC, 'name' VARCHAR(255), 'date_time_in' DATETIME, 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_out' DATETIME)", []);
+						tx.executeSql("DROP TABLE project_data_capture", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS project_data_capture('id' INTEGER PRIMARY KEY ASC, 'proj_input_id' INTEGER, 'user_id' INTEGER, 'user_submission_num' INTEGER, 'project_id' INTEGER, 'value' VARCHAR(255), 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_created' DATETIME)", []);
+					});
+					
+					$('#Data_Sync').html('').append('Captured Submissions Have Been Uploaded').trigger('create');
+					
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}		
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
+			}
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}		
 		
       }
 	  
