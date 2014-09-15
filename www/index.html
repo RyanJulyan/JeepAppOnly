@@ -64,7 +64,13 @@
 			var user_log = document.getElementById('user_cap_val').value;
 			if(user_log == "" || user_log == null){
 				event.preventDefault();
-				navigator.notification.alert("Please Input Your Name To Capture Data", alertDismissed, "User Not Entered", "OK");
+				 navigator.notification.alert(
+					'You are the winner!',  // message
+					alertDismissed,         // callback
+					'Game Over',            // title
+					'Done'                  // buttonName
+				);
+				//navigator.notification.alert("Please Input Your Name To Capture Data", alertDismissed, "User Not Entered", "OK");
 			}
 		});
 		
