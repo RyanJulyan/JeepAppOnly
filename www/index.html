@@ -60,7 +60,12 @@
 			if(allowLog != true){
 				console.log("Prvent check fired");
 				event.preventDefault();
-				navigator.notification.alert("Your Username or Password do not match", alertDismissed, "Error", "Try Again");
+				if(navigator.notification){
+					navigator.notification.alert("Your Username or Password do not match", alertDismissed, "Error", "Try Again");
+				}
+				else{
+					alert("Your Username or Password do not match");
+				}
 				$("#admin_pass_log").val('');
 			}
 			else{
@@ -90,14 +95,11 @@
 			if(user_log == "" || user_log == null){
 				event.preventDefault();
 				if(navigator.notification){
-					navigator.notification.alert(
-						'You are the winner!',  // message
-						alertDismissed,         // callback
-						'Game Over',            // title
-						'Done'                  // buttonName
-					);
+					navigator.notification.alert("Please Input Your Name To Capture Data", alertDismissed, "User Not Entered", "OK");
 				}
-				//navigator.notification.alert("Please Input Your Name To Capture Data", alertDismissed, "User Not Entered", "OK");
+				else{
+					alert("Please Input Your Name To Capture Data");
+				}
 			}
 		});
 		
