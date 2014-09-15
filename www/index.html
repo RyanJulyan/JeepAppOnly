@@ -1,40 +1,449 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <head>
-    <title>Notification Example</title>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jeep</title>
+<link rel="stylesheet" href="css/jeep_app.css" />
+<link rel="stylesheet" href="css/structure.css" />
+<link rel="stylesheet" href="css/jquery_mobile_icons.css" />
+<link rel="stylesheet" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/jquery_mobile.js"></script>
+<script>
+	var allowLog = false;
+	$(document).ready(function(){
+		
+		$("#start_go_to_admin").click(function(event){
+			jeep.webdb.open();
+			jeep.webdb.getAdminLogInfo(loadAdminLogInfo);
+			
+		});
+		
+		$("#admin_sub").click(function(event){
+			var admin_name_log = $("#admin_name_log").val();
+			var admin_pass_log = $("#admin_pass_log").val();
+			
+			for(var i =0; i<AdminLogInfoArr.length;i++){
+				if( admin_name_log == AdminLogInfoArr[i].name && admin_pass_log == AdminLogInfoArr[i].password){
+					allowLog = true;
+					$("#admin_id").val(AdminLogInfoArr[i].id);
+					break;
+				}
+			}
+			
+			if(allowLog != true){
+				console.log("Prvent check fired");
+				event.preventDefault();
+				navigator.notification.alert("Your Username or Password do not match", alertDismissed, "Error", "Try Again");
+				$("#admin_pass_log").val('');
+			}
+			else{
+				$("#admin_name_log").val('');
+				$("#admin_pass_log").val('');
+			}
+			
+		});
+		
+		$("#user_log_out").click(function(event){
+			jeep.webdb.open();
+			jeep.webdb.setUserLogOut();
+			if(navigator.onLine){
+				getAllUsers();
+				getAllUserDataCap();
+			}
+		});
+		
+		
+		$(".log_out").click(function(event){
+			allowLog = false;
+			$("#admin_id").val(0);
+		});
+		
+		$("#user_log").click(function(event){
+			var user_log = document.getElementById('user_cap_val').value;
+			if(user_log == "" || user_log == null){
+				event.preventDefault();
+				navigator.notification.alert(
+					'You are the winner!',  // message
+					alertDismissed,         // callback
+					'Game Over',            // title
+					'Done'                  // buttonName
+				);
+				//navigator.notification.alert("Please Input Your Name To Capture Data", alertDismissed, "User Not Entered", "OK");
+			}
+		});
+		
+		$(document).on("pagebeforeshow","#project_cap_sheet",function(){ // When entering project_cap_sheet
+			jeep.webdb.open();
+			addUser();
+			jeep.webdb.getCurrentUserId(loadCurrentUserId);
+			jeep.webdb.getAllprojectItems(loadprojectItems);
+			$("#cur_UserName").html('').append($("#user_name").val()).trigger('create');
+		});
+		
+		
+		$(document).on("pagebeforeshow","#user",function(){ // When entering user
+			jeep.webdb.open();
+			jeep.webdb.getProjectLogo(loadProjectLogo);
+			
+		});
+		
+		$(document).on("pageshow","#user",function(){ // When entering user
+			// run geolocation for form to be populated
+			var confirmLocationUse = confirm("Activate Your Location And Allow Us To Use It?");
+			
+			if (confirmLocationUse == true) {
+				latLong();
+			} else {
+				latitude = "User Declined Location";
+				longitude = "User Declined Location";
+			}
+		});
+		
+		$(document).on("pagebeforeshow","#view_data",function(){ // When entering view_data
+			jeep.webdb.open();
+			jeep.webdb.getAllCapData(loadAllCapData);
+		});
+		
+		$(document).on("pagebeforeload","#select_project_user",function(){ // When entering view_data
+			jeep.webdb.open();
+			jeep.webdb.getAllProjects(loadAllProjectsForUser);
+		});
+		
+		$( document ).on( "click", ".show-page-loading-msg", function() {
+			var $this = $( this ),
+				theme = $this.jqmData( "theme" ) || $.mobile.loader.prototype.options.theme,
+				msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
+				textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+				textonly = !!$this.jqmData( "textonly" );
+				html = $this.jqmData( "html" ) || "";
+			$.mobile.loading( "show", {
+					text: msgText,
+					textVisible: textVisible,
+					theme: theme,
+					textonly: textonly,
+					html: html
+			});
+			setTimeout(function(){setServProject();},100);
+		})
+		
+	});
+	function alertDismissed() {
+		// do something
+	}
+</script>
+</head>
 
-    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
-    <script type="text/javascript" charset="utf-8">
+<body onload="init();">
+<input type="hidden" id='lat' value="Not Available"/>
+<input type="hidden" id='long' value="Not Available"/>
+<input type="hidden" id='project_id' value="0"/>
+<input type="hidden" id='admin_id' value="0"/>
+<input type="hidden" id='user_name' value="0"/>
+<input type="hidden" id='user_id' value="0"/>
 
-    // Wait for device API libraries to load
-    //
-    document.addEventListener("deviceready", onDeviceReady, false);
 
-    // device APIs are available
-    //
-    function onDeviceReady() {
-        // Empty
-    }
+<div id="start" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false">
+    	<div style="background-color:#FFF; height:18px;"></div>
+         <a href="#" data-icon="arrow-d" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="getAllData();">Download Projects</a>
+		<h1>
+			Jeep
+		</h1>
+        <a href="#" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="getAllUsers(); getAllUserDataCap();">Upload Data</a>
+	</div>
+	<div class="infoBox" data-role="main" data-theme="d">
+		<h2 class="headingStyle">Welcome</h2>
+        <h4>Capture data for projects or Set up projects to be captured</h4>
+        <br>
+        <ul data-role="listview" data-inset="true">
+                <li>
+                    <a href="#select_project_user" data-theme="d" data-transition="slide"><h2>Capture Data</h2><p>Choose your Event Capture the data for that event</p></a>
+                    
+                </li>
+                <li>
+                    <a href="#admin" data-theme="d" data-transition="slide" id="start_go_to_admin" ><h2>Admin</h2><p>Log in to create projects and forms</p></a>
+                </li>
+		</ul>
+	</div>
+</div>
 
-    // alert dialog dismissed
-        function alertDismissed() {
-            // do something
-        }
+<div id="admin" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+    	<a href="#start" data-icon="arrow-l" data-transition="slide" data-direction="reverse" style="margin-top:18px;">back</a>
+		<h1>
+			Jeep
+		</h1>
+	</div>
+	<div class="infoBox" data-role="main" data-theme="d">
+		<h2 class="headingStyle">Admin</h2>
+		<input type="text" data-theme="d" data-role="input" placeholder="User Name" id="admin_name_log" />
+		<input type="password" data-theme="d" data-role="input" placeholder="Password" id="admin_pass_log" />
+		<a href="#choose_action" id="admin_sub" data-role="button" data-theme="d"  data-mini="true" data-icon="lock" data-iconpos="right" data-transition="slide" >Log In</a>
+	</div>
+</div>
 
-    // Show a custom alertDismissed
-    //
-    function showAlert() {
-        navigator.notification.alert(
-            'You are the winner!',  // message
-            alertDismissed,         // callback
-            'Game Over',            // title
-            'Done'                  // buttonName
-        );
-    }
+<div id="choose_action" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+		<a href="#admin" data-icon="lock" data-iconpos="right" class="log_out" style="margin-top:18px;">Logout</a>
+        <h1>
+			Jeep
+		</h1>
+	</div>
+	<div class="infoBox" data-role="main" data-theme="d">
+		<h2 class="headingStyle">Choose Action</h2>
+		<a href="#create_project" class="btnBigger" data-role="button" data-theme="d" data-icon="action" data-iconpos="right" data-transition="flow">Create Project</a>
+        <a href="#link_input_to_proj" class="btnBigger" data-role="button" data-theme="d" data-icon="gear" data-iconpos="right" data-transition="flip">Project Options</a>
+		<a href="#select_project_data" class="btnBigger" data-role="button" data-theme="d" data-icon="arrow-d" data-iconpos="right" data-transition="slidedown">Downlaod Data</a>
+        
+	</div>
+</div>
 
-    </script>
-  </head>
-  <body>
-    <p><a href="#" onclick="showAlert(); return false;">Show Alert</a></p>
-  </body>
+<div id="new_input_type" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+		<a href="#choose_action" data-icon="arrow-l" data-transition="flip" data-direction="reverse" style="margin-top:18px;">back</a>
+		<h1>
+			Jeep
+		</h1>
+        <a href="#admin" data-icon="lock" data-iconpos="right" class="ui-btn-right log_out" style="margin-top:18px;">Logout</a>
+	</div>
+	<div class="infoBox" data-role="main" data-theme="d">
+		<h2 class="headingStyle">Add New Input Type</h2>
+		<form type="post" onsubmit="setServDataType(); return false;">
+		  <input type="text" id="data_type" name="data_type" placeholder="Input Type" />
+		  <input type="submit" value="Add Input Type" data-icon="check" data-iconpos="right" />
+		</form>
+	</div>
+     <div data-role="footer" data-position="fixed" data-theme="d" data-id="proj_options_admin" data-tap-toggle="false">
+    	<div data-role="navbar">
+            <ul>
+                <li><a href="#" data-icon="plus" data-theme="d">Add Input Type</a></li>
+                <li><a href="#new_input" data-icon="edit" data-theme="d">Create New Input</a></li>
+                <li><a href="#link_input_to_proj" data-icon="bullets" data-theme="d">Link Input To Project</a></li>
+            </ul>
+        </div>
+	</div>
+</div>
+
+
+<div id="new_input" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+		<a href="#choose_action" data-icon="arrow-l" data-transition="flip" data-direction="reverse" style="margin-top:18px;">back</a>
+		<h1>
+			Jeep
+		</h1>
+        <a href="#admin" data-icon="lock" data-iconpos="right" class="ui-btn-right log_out" style="margin-top:18px;">Logout</a>
+	</div>
+    <div class="infoBox" data-role="main" data-theme="d">
+        <h2 class="headingStyle">Create New Input</h2>
+        <form type="post" onsubmit="setServNewInput(); return false;">
+          Choose Input Type:<br/>
+          <select id="data_type_select" name="data_type_select" >
+            <option> Choose Input Type</option>
+          </select>
+          <br/>
+          <input type="text" id="input_label" name="input_label" placeholder="Label" />
+          <br/>
+          <input type="text" id="input_group_name" name="input_group_name" placeholder="Input Group Name ... eg Gender" />
+          <br/>
+          Required:<br/>
+          <select class="alignLeft" name="rec_feild" id="rec_feild" data-role="slider">
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </select>
+        <br/>
+          <input type="submit" value="Create New Input" data-icon="check" data-iconpos="right"/>
+        </form>
+        
+    </div>
+    <div data-role="footer" data-position="fixed" data-theme="d" data-id="proj_options_admin" data-tap-toggle="false">
+    	<div data-role="navbar">
+            <ul>
+                <li><a href="#new_input_type" data-icon="plus" data-theme="d">Add Input Type</a></li>
+                <li><a href="#" data-icon="edit" data-theme="d">Create New Input</a></li>
+                <li><a href="#link_input_to_proj" data-icon="bullets" data-theme="d">Link Input To Project</a></li>
+            </ul>
+        </div>
+	</div>
+</div>
+
+<div id="create_project" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+    	<a href="#choose_action" data-icon="arrow-l" data-transition="flow" data-direction="reverse" style="margin-top:18px;">back</a>
+		<h1>
+			Jeep
+		</h1>
+        <a href="#admin" data-icon="lock" data-iconpos="right" class="ui-btn-right log_out" style="margin-top:18px;">Logout</a>
+	</div>
+    <div class="infoBox" data-role="main" data-theme="d">
+        <h2 class="headingStyle">Create Project</h2>
+        <!--<form type="post" onsubmit="addProject(); setServProject(); return false;">-->
+        <!--<form type="post" onsubmit="setServProject(); return false;">-->
+        <form type="post" onsubmit="return false;">
+          <input type="text" id="project_name" name="project_name" placeholder="Project Name" />
+          <input type="file" name="big_logo" id="big_logo">
+          <input type="file" name="small_logo" id="small_logo">
+          <br/>
+          <!--
+          Big Logo:
+          <br/>
+          <input type="file" name="big_logo" id="big_logo">
+          <br>
+          Small Logo:
+          <br/>
+          <input type="file" name="small_logo" id="small_logo">
+          <br/>
+          -->
+          Project Logo:
+          <br/>
+          <input type="file" name="project_logo" id="project_logo">
+          <input type="file" name="background" id="background">
+          <br/>
+          <!--
+          Background:<br/><span class='smallText'>This will Tile accross your whole background</span>
+          <br/>
+          <input type="file" name="background" id="background">
+          <br/>
+          -->
+          Project Start Date:<br/><span class='smallText'>yyyy/mmmm/dd hh:mm AM/PM</span>
+          <br/>
+          <input type="datetime-local" name="start_date" id="start_date" data-role="datebox">
+          <br/>
+          Project End Date:<br/><span class='smallText'>yyyy/mmmm/dd hh:mm AM/PM</span>
+          <br/>
+          <input type="datetime-local" name="end_date" id="end_date" data-role="datebox" placeholder="yyyy/mmmm/dd hh:mm">
+          <br/>
+          
+          <input type="submit" value="Create New Input" data-icon="check" data-iconpos="right" class="show-page-loading-msg" data-theme="d" data-textonly="false" data-textvisible="true" data-msgtext="Uploading Project"/>
+        </form>
+        
+    </div>
+</div>
+
+<div id="link_input_to_proj" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+		<a href="#choose_action" data-icon="arrow-l" data-transition="flip" data-direction="reverse" style="margin-top:18px;">back</a>
+		<h1>
+			Jeep
+		</h1>
+        <a href="#admin" data-icon="lock" data-iconpos="right" class="ui-btn-right log_out" style="margin-top:18px;">Logout</a>
+	</div>
+    <div class="infoBox" data-role="main" data-theme="d">
+        <h2 class="headingStyle">Link Input To Project</h2>
+        <form type="post" onsubmit="setServProjInput(); return false;">
+          <select id="project_select" name="project_select">
+            <option> Choose Project
+            </option>
+          </select>
+          <br/>
+          Choose Input Type:
+          <div id="select_inputs_area">
+          </div>
+          <br/>
+          <input type="submit" value="Assign To Project & Complete" data-icon="check" data-iconpos="right"/>
+        </form>
+    </div>
+    <div data-role="footer" data-position="fixed" data-theme="d" data-id="proj_options_admin" data-tap-toggle="false">
+    	<div data-role="navbar">
+            <ul>
+                <li><a href="#new_input_type" data-icon="plus" data-theme="d">Add Input Type</a></li>
+                <li><a href="#new_input" data-icon="edit" data-theme="d">Create New Input</a></li>
+                <li><a href="#" data-icon="bullets" data-theme="d">Link Input To Project</a></li>
+            </ul>
+        </div>
+	</div>
+</div>
+
+<div id="select_project_data" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+    	<a href="#choose_action" data-icon="arrow-l" data-transition="slidedown" data-direction="reverse" style="margin-top:18px;">back</a>
+		<h1>
+			Jeep
+		</h1>
+        <a href="#admin" data-icon="lock" data-iconpos="right" class="ui-btn-right log_out" style="margin-top:18px;">Logout</a>
+	</div>
+    <div class="infoBox" data-role="main" data-theme="d">
+        <h2 class="headingStyle">Select Project</h2>
+        <ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Search for Project" id="project_for_data">
+        </ul>
+    </div>
+</div>
+
+<div id="select_project_user" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+    	<a href="#start" data-icon="arrow-l" data-transition="slide" data-direction="reverse" style="margin-top:18px;">back</a>
+		<h1>
+			Jeep
+		</h1>
+	</div>
+    <div class="infoBox" data-role="main" data-theme="d">
+        <h2 class="headingStyle">Select Project</h2>
+        <ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Search for Project" id="project_for_user">
+        </ul>
+    </div>
+</div>
+
+<div id="view_data" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+    	<a href="#select_project_data" data-icon="arrow-l" data-transition="slide" data-direction="reverse" style="margin-top:18px;">back</a>
+		<h1>
+			Jeep
+		</h1>
+	</div>
+    <div class="infoBox" data-role="main" data-theme="d">
+       <!-- Total Submissions: <span id="totalSubs">200 People</span><br>-->
+        <button data-role="button" data-theme="d"  data-mini="true" data-icon="arrow-d" data-iconpos="right" data-inline="true" >Download CSV</button><br>
+    <table data-filter="true" data-filter-placeholder="Search for Infomation" id='render_data' border="1" >
+    </table>
+    </div>
+</div>
+
+<div id="user" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+    	<a href="#select_project_user" data-icon="arrow-l" data-transition="slide" data-direction="reverse" style="margin-top:18px;">back</a>
+		<h1>
+			Jeep
+		</h1>
+	</div>
+    <div class="infoBox" data-role="main" data-theme="d">
+        <img id="user_log_img" src="img/proj_img_wht.png" />
+        <h2 class="headingStyle">User</h2>
+            <input type="text" data-theme="d" data-role="input" id="user_cap_val" name="user_cap_val" placeholder="User Name" />
+            <a href="#project_cap_sheet" id="user_log" data-role="button" data-theme="d"  data-mini="true" data-icon="lock" data-iconpos="right" data-transition="slide" >Start</a>
+    </div>
+</div>
+
+<div id="project_cap_sheet" data-role="page" data-theme="d">
+	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
+    	<div style="background-color:#FFF; height:18px;"></div>
+    	<a href="#user" data-icon="arrow-l" data-transition="slide" data-direction="reverse" style="margin-top:18px;" id="user_log_out">Logout</a>
+		<h1>
+			Jeep
+		</h1>
+        <a href="#" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="getAllUsers(); getAllUserDataCap();">Upload Data</a>
+	</div>
+    <div class="infoBox" data-role="main" data-theme="d">
+        <img id="project_cap_img" src="img/proj_img.png" />
+        <form type="post" id="projectItems" onsubmit="return false;">
+         </form>
+         Current User: <span id="cur_UserName">Unknown User</span>
+         <br>
+         Number of Submissions: <span id="cur_subs">0</span>
+         <h3 id="User_Sync">User Not Synced</h3>
+         <h3 id="Data_Sync">Submissions Not Synced</h3>
+    </div>
+</div>
+<script src="js/dbLinkedFile.js"></script>
+</body>
 </html>
