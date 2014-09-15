@@ -94,7 +94,9 @@
 			var user_log = document.getElementById('user_cap_val').value;
 			if(user_log == "" || user_log == null){
 				event.preventDefault();
-				showAlert();
+				if(navigator.notification){
+					showAlert();
+				}
 				//navigator.notification.alert("Please Input Your Name To Capture Data", alertDismissed, "User Not Entered", "OK");
 			}
 		});
