@@ -947,9 +947,9 @@
 		   var cur_project_id = document.getElementById('project_id').value;
 		   var cur_user_id = document.getElementById('user_id').value;
 		// alert('Loaded');
-		if(row.data_type == "radio"){	
+		if(row.data_type == "radio"){
 			if(row.required = 1){
-				return "<label for='"+row.label+"_"+row.id+"'>"+row.label+" * </label><input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' required>";
+				return "<label for='"+row.label+"_"+row.id+"'>"+row.label+" * </label><input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' required='required' data-errormessage='This Is Required.'>";
 			}
 			else{
 				return "<label for='"+row.label+"_"+row.id+"' >"+row.label+"</label><input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"'>";
@@ -957,7 +957,7 @@
 		}
 		else if(row.data_type == "checkbox"){
 			if(row.required = 1){
-				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' data-role='input' data-theme='d' required /><label for='"+row.label+"_"+row.id+"'>"+row.label+" * </label>";
+				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' data-role='input' data-theme='d' required='required'  data-errormessage='This Is Required.' /><label for='"+row.label+"_"+row.id+"'>"+row.label+" * </label>";
 			}
 			else{
 				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' data-role='input' data-theme='d' /><label for='"+row.label+"_"+row.id+"'>"+row.label+"</label>";
@@ -965,7 +965,7 @@
 		}
 		else{
 			if(row.required = 1){
-				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' placeholder='"+row.label+" * ' data-role='input' data-theme='d' required />";
+				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' placeholder='"+row.label+" * ' data-role='input' data-theme='d' required='required' data-errormessage='This Is Required.'/>";
 			}
 			else{
 				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' placeholder='"+row.label+"' data-role='input' data-theme='d' />";
