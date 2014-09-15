@@ -82,15 +82,6 @@
 		  latitude = document.getElementById('lat').value;
 		  longitude = document.getElementById('long').value;		  
 	  }
-	  	// run geolocation for form to be populated
-		var confirmLocationUse = confirm("Activate Your Location And Allow Us To Use It?");
-		
-		if (confirmLocationUse == true) {
-			latLong();
-		} else {
-			latitude = "User Declined Location";
-			longitude = "User Declined Location";
-		}
       
 	  jeep.webdb.addUser = function(userText, latitude, longitude) {
 		
@@ -898,41 +889,6 @@
 				jeep.webdb.getAllProjects(loadAllProjectsForUser);
 				jeep.webdb.getAllInputInfo(loadAllInputInfo);
 				jeep.webdb.getAllCapData(loadAllCapData);
-				
-				if(navigator.onLine){
-					var confirmloadServProject = confirm("Get the projects information from the server?\nTo ensure that you get the latest projects");
-		
-					if (confirmloadServProject == true) {
-						theme = "d" || $.mobile.loader.prototype.options.theme,
-						msgText = "Downloading Information From Server This May Take A While"  || $.mobile.loader.prototype.options.text,
-						textVisible = "true" || $.mobile.loader.prototype.options.textVisible,
-						textonly = "false";
-						html = "";
-						$.mobile.loading( "show", {
-								text: msgText,
-								textVisible: textVisible,
-								theme: theme,
-								textonly: textonly,
-								html: html
-						});
-						setTimeout(function(){
-							getAllUserDataCap();
-							loadServAdmin();
-							loadServDataType();
-							loadServInputInfo();
-							loadServProjInput();
-							loadServSuperUser();
-							loadServProject();
-						},100);
-					} else {
-						alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
-					}
-					
-				}
-				else{
-					alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device");
-				}
-				
 			}
 		} catch(e) {
 			// Error handling code goes here.
@@ -1777,3 +1733,40 @@
 			
 			
 		}
+		
+		function getAllData(){
+					if(navigator.onLine){
+						var confirmloadServProject = confirm("Get the projects information from the server?\nTo ensure that you get the latest projects");
+			
+						if (confirmloadServProject == true) {
+							theme = "d" || $.mobile.loader.prototype.options.theme,
+							msgText = "Downloading Information From Server This May Take A While"  || $.mobile.loader.prototype.options.text,
+							textVisible = "true" || $.mobile.loader.prototype.options.textVisible,
+							textonly = "false";
+							html = "";
+							$.mobile.loading( "show", {
+									text: msgText,
+									textVisible: textVisible,
+									theme: theme,
+									textonly: textonly,
+									html: html
+							});
+							setTimeout(function(){
+								getAllUserDataCap();
+								loadServAdmin();
+								loadServDataType();
+								loadServInputInfo();
+								loadServProjInput();
+								loadServSuperUser();
+								loadServProject();
+							},100);
+						} else {
+							alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
+						}
+				
+					
+					}
+					else{
+						alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device");
+					}
+				}
