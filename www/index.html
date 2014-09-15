@@ -24,15 +24,23 @@
     }
 
     // alert dialog dismissed
-        function alertDismissed() {
-            // do something
-        }
-
-    // Show a custom alertDismissed
-    //
-    function showAlert() {
-        
-    }
+	function alertDismissed() {
+	}
+	
+	function onConfirm(buttonIndex) {
+		alert('You selected button ' + buttonIndex);
+	}
+	
+	// Show a custom confirmation dialog
+	//
+	function showConfirm() {
+		navigator.notification.confirm(
+			'You are the winner!', // message
+			 onConfirm,            // callback to invoke with index of button pressed
+			'Game Over',           // title
+			['Restart','Exit']         // buttonLabels
+		);
+	}
 
 </script>
 <script>
@@ -119,14 +127,20 @@
 		});
 		
 		$(document).on("pageshow","#user",function(){ // When entering user
-			// run geolocation for form to be populated
-			var confirmLocationUse = confirm("Activate Your Location And Allow Us To Use It?");
 			
-			if (confirmLocationUse == true) {
-				latLong();
-			} else {
-				latitude = "User Declined Location";
-				longitude = "User Declined Location";
+			if(navigator.notification){
+				showConfirm();
+			}
+			else{
+				// run geolocation for form to be populated
+				var confirmLocationUse = confirm("Activate Your Location And Allow Us To Use It?");
+				
+				if (confirmLocationUse == true) {
+					latLong();
+				} else {
+					latitude = "User Declined Location";
+					longitude = "User Declined Location";
+				}
 			}
 		});
 		
