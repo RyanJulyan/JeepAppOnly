@@ -10,6 +10,38 @@
 <link rel="stylesheet" href="css/main.css" />
 <script src="js/jquery.js"></script>
 <script src="js/jquery_mobile.js"></script>
+<!-- Needed for Forms Feature Detection -->
+<script type="text/javascript" src="js/modernizr.com/Modernizr-2.5.3.forms.js"></script>
+<!-- Needed for Validation --> 
+<script type="text/javascript" src="js/html5Forms.js" data-webforms2-support="validation"></script>
+<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+<script type="text/javascript" charset="utf-8">
+
+    // Wait for device API libraries to load
+    //
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // device APIs are available
+    //
+    function onDeviceReady() {
+        // Empty
+    }
+
+    // alert dialog dismissed
+	function alertDismissed() {
+	}
+	
+	function onConfirm(buttonIndex) {
+		
+		if (buttonIndex == 1) {
+			latLong();
+		} else {
+			latitude = "User Declined Location";
+			longitude = "User Declined Location";
+		}
+	}
+
+</script>
 <script>
 	var allowLog = false;
 	$(document).ready(function(){
@@ -35,7 +67,12 @@
 			if(allowLog != true){
 				console.log("Prvent check fired");
 				event.preventDefault();
-				alert("Your Username or Password do not match");
+				if(navigator.notification){
+					navigator.notification.alert("Your Username or Password do not match", alertDismissed, "Error", "Try Again");
+				}
+				else{
+					alert("Your Username or Password do not match");
+				}
 				$("#admin_pass_log").val('');
 			}
 			else{
@@ -48,8 +85,10 @@
 		$("#user_log_out").click(function(event){
 			jeep.webdb.open();
 			jeep.webdb.setUserLogOut();
-			getAllUsers();
-			getAllUserDataCap();			
+			if(navigator.onLine){
+				getAllUsers();
+				getAllUserDataCap();
+			}
 		});
 		
 		
@@ -62,7 +101,12 @@
 			var user_log = document.getElementById('user_cap_val').value;
 			if(user_log == "" || user_log == null){
 				event.preventDefault();
-				alert("Please Input Your Name To Capture Data");
+				if(navigator.notification){
+					navigator.notification.alert("Please Input Your Name To Capture Data", alertDismissed, "User Not Entered", "OK");
+				}
+				else{
+					alert("Please Input Your Name To Capture Data");
+				}
 			}
 		});
 		
@@ -78,16 +122,37 @@
 		$(document).on("pagebeforeshow","#user",function(){ // When entering user
 			jeep.webdb.open();
 			jeep.webdb.getProjectLogo(loadProjectLogo);
+			
 		});
 		
-		$(document).on("pagebeforeshow","#view_data",function(){ // When entering view_data
+		$(document).on("pageshow","#user",function(){ // When entering user
+			
+			if(navigator.notification){
+				navigator.notification.confirm('Allow Us To Use Your Location?', onConfirm, 'Get User Location', ['Yes','No']);
+			}
+			else{
+				// run geolocation for form to be populated
+				var confirmLocationUse = confirm("Activate Your Location And Allow Us To Use It?");
+				
+				if (confirmLocationUse == true) {
+					latLong();
+				} else {
+					latitude = "User Declined Location";
+					longitude = "User Declined Location";
+				}
+			}
+		});
+		
+		$(document).on("pageshow","#view_data",function(){ // When entering view_data
 			jeep.webdb.open();
-			jeep.webdb.getAllCapData(loadAllCapData);
+			// jeep.webdb.getAllCapData(loadAllCapData);
+			loadAllDataCapDynamic(1);
 		});
 		
 		$(document).on("pagebeforeload","#select_project_user",function(){ // When entering view_data
 			jeep.webdb.open();
 			jeep.webdb.getAllProjects(loadAllProjectsForUser);
+			$('#project_for_user').listview("refresh");
 		});
 		
 		$( document ).on( "click", ".show-page-loading-msg", function() {
@@ -105,9 +170,27 @@
 					html: html
 			});
 			setTimeout(function(){setServProject();},100);
-		})
+		});
+		
+		$( document ).on( "click", ".show-page-loading-msg-gen", function() {
+			var $this = $( this ),
+				theme = $this.jqmData( "theme" ) || $.mobile.loader.prototype.options.theme,
+				msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
+				textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+				textonly = !!$this.jqmData( "textonly" );
+				html = $this.jqmData( "html" ) || "";
+			$.mobile.loading( "show", {
+					text: msgText,
+					textVisible: textVisible,
+					theme: theme,
+					textonly: textonly,
+					html: html
+			});
+		});
 		
 	});
+	
+
 </script>
 </head>
 
@@ -123,12 +206,16 @@
 <div id="start" data-role="page" data-theme="d">
 	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false">
     	<div style="background-color:#FFF; height:18px;"></div>
+         <a href="#" data-icon="arrow-d" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="getAllData();">Download Projects</a>
 		<h1>
 			Jeep
 		</h1>
+        <a href="#" class="show-page-loading-msg-gen" data-textonly="false" data-textvisible="true" data-msgtext="" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="setTimeout(function(){getAllUsers(); getAllUserDataCap();},100)">Upload Data</a>
 	</div>
 	<div class="infoBox" data-role="main" data-theme="d">
-		<h2 class="headingStyle">Admin</h2>
+		<h2 class="headingStyle">Welcome</h2>
+        <h4>Capture data for projects or Set up projects to be captured</h4>
+        <br>
         <ul data-role="listview" data-inset="true">
                 <li>
                     <a href="#select_project_user" data-theme="d" data-transition="slide"><h2>Capture Data</h2><p>Choose your Event Capture the data for that event</p></a>
@@ -160,10 +247,10 @@
 <div id="choose_action" data-role="page" data-theme="d">
 	<div data-role="header" data-position="fixed" data-theme="d" data-position="fixed" data-id="jeep_header_all" data-tap-toggle="false" >
     	<div style="background-color:#FFF; height:18px;"></div>
-		<h1>
+		<a href="#admin" data-icon="lock" data-iconpos="right" class="log_out" style="margin-top:18px;">Logout</a>
+        <h1>
 			Jeep
 		</h1>
-        <a href="#admin" data-icon="lock" data-iconpos="right" class="ui-btn-right log_out" style="margin-top:18px;">Logout</a>
 	</div>
 	<div class="infoBox" data-role="main" data-theme="d">
 		<h2 class="headingStyle">Choose Action</h2>
@@ -343,7 +430,6 @@
         <a href="#admin" data-icon="lock" data-iconpos="right" class="ui-btn-right log_out" style="margin-top:18px;">Logout</a>
 	</div>
     <div class="infoBox" data-role="main" data-theme="d">
-        <h2 class="headingStyle">Select Project</h2>
         <ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Search for Project" id="project_for_data">
         </ul>
     </div>
@@ -359,8 +445,8 @@
 	</div>
     <div class="infoBox" data-role="main" data-theme="d">
         <h2 class="headingStyle">Select Project</h2>
-        <ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Search for Project" id="project_for_user">
-        </ul>
+        </ul>        <ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Search for Project" id="project_for_user">
+
     </div>
 </div>
 
@@ -372,11 +458,27 @@
 			Jeep
 		</h1>
 	</div>
-    <div class="infoBox" data-role="main" data-theme="d">
-       <!-- Total Submissions: <span id="totalSubs">200 People</span><br>-->
-        <button data-role="button" data-theme="d"  data-mini="true" data-icon="arrow-d" data-iconpos="right" data-inline="true" >Download CSV</button><br>
-    <table data-filter="true" data-filter-placeholder="Search for Infomation" id='render_data' border="1" >
-    </table>
+    <div data-role="main" class="infoBox ui-content" data-theme="d">
+    	<a href="#" id="download_csv" target="_blank" data-role="button" data-theme="d" data-mini="true" data-icon="arrow-d" data-iconpos="right" data-inline="true" >Download CSV</a><br>
+        <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+        	<h4>Send CSV-Link via Email</h4>
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <input id="csv_email" type="email" placeholder="Email" data-inline="true">
+                </div>
+                <div class="ui-block-b" style="text-align:left;">
+                    <button data-inline="true" onClick="sendEmail('csv_email');">Send Email</button>
+                </div>
+            </div>
+        </div>
+        <br>
+        Total Submissions: Estimated <span id="totalSubs">0</span> People<br>
+        <div style="width:100%;" id="cur_page_out_of"></div>
+        <div id="render_data">
+        <table style="width:100%; margin:auto;" >
+        <tr><td>LOADING...</td></tr>
+        </table>
+        </div>
     </div>
 </div>
 
@@ -403,7 +505,7 @@
 		<h1>
 			Jeep
 		</h1>
-        <a href="#" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="getAllUsers(); getAllUserDataCap();">Upload Data</a>
+        <a href="#" class="show-page-loading-msg-gen" data-textonly="false" data-textvisible="true" data-msgtext="" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="setTimeout(function(){getAllUsers(); getAllUserDataCap();},100)">Upload Data</a>
 	</div>
     <div class="infoBox" data-role="main" data-theme="d">
         <img id="project_cap_img" src="img/proj_img.png" />

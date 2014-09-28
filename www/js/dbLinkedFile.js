@@ -76,21 +76,17 @@
 				  document.getElementById('lat').value = position.coords.latitude;
 				  document.getElementById('long').value = position.coords.longitude;
 			  });
-		  } else { 
-			  alert("Geolocation is not supported by this browser.");
+		  } else {
+			  if(navigator.notification){
+					navigator.notification.alert("Geolocation is not supported by this Device", alertDismissed, "Geolocation Error", "OK");
+				}
+				else{
+			  		alert("Geolocation is not supported by this Device.");
+				}
 		  }
 		  latitude = document.getElementById('lat').value;
 		  longitude = document.getElementById('long').value;		  
 	  }
-	  	// run geolocation for form to be populated
-		var confirmLocationUse = confirm("Activate Your Location And Allow Us To Use It?");
-		
-		if (confirmLocationUse == true) {
-			latLong();
-		} else {
-			latitude = "User Declined Location";
-			longitude = "User Declined Location";
-		}
       
 	  jeep.webdb.addUser = function(userText, latitude, longitude) {
 		
@@ -101,7 +97,7 @@
 			
 			var date_time_in = new Date();
 			var year = date_time_in.getFullYear();
-			var month = date_time_in.getMonth();
+			var month = date_time_in.getMonth() + 1;
 			var day = date_time_in.getDate();
 			var hours = date_time_in.getHours();
 			var minutes = date_time_in.getMinutes();
@@ -113,7 +109,7 @@
 			
 			tx.executeSql("INSERT INTO user(name, date_time_in, cur_lat, cur_long) VALUES (?,?,?,?)",
 				[userText, date_time_in, latitude, longitude],
-				jeep.webdb.onSuccess,
+				jeep.webdb.onChangeSuccess,
 				jeep.webdb.onError
 			);
          });
@@ -130,7 +126,7 @@
 			
 			var date_time_out = new Date();
 			var year = date_time_out.getFullYear();
-			var month = date_time_out.getMonth();
+			var month = date_time_out.getMonth() + 1;
 			var day = date_time_out.getDate();
 			var hours = date_time_out.getHours();
 			var minutes = date_time_out.getMinutes();
@@ -142,7 +138,7 @@
 			
 			tx.executeSql("UPDATE  user SET  date_time_out = ? WHERE  id =?;",
 				[date_time_out, user_id],
-				jeep.webdb.onSuccess,
+				jeep.webdb.onChangeSuccess,
 				jeep.webdb.onError
 			);
          });
@@ -160,7 +156,13 @@
 			);
 			
          });
-		 alert("New Input Type: " + dataType + " Added");
+		 
+		 if(navigator.notification){
+			navigator.notification.alert("New Input Type: " + dataType + " Added", alertDismissed, "New Input Type", "Great");
+		 }
+		 else{
+		 	alert("New Input Type: " + dataType + " Added");
+		 }
       }
 	  
 	  jeep.webdb.addInputInfo = function(dataTypeID,inputLabel,inputRequired,inputName) {
@@ -175,8 +177,12 @@
 			);
 			
          });
-		 
-		 alert("New Input: " + inputLabel + " Created");
+		 if(navigator.notification){
+			navigator.notification.alert("New Input: " + inputLabel + " Created", alertDismissed, "New Input Information", "Great");
+		 }
+		 else{
+		 	alert("New Input: " + inputLabel + " Created");
+		 }
       }
 	  
 	  jeep.webdb.addProjectInput = function(inputInfoID,projectID, viewpos) {
@@ -202,7 +208,7 @@
 			
 			var date_time_in = new Date();
 			var year = date_time_in.getFullYear();
-			var month = date_time_in.getMonth();
+			var month = date_time_in.getMonth() + 1;
 			var day = date_time_in.getDate();
 			var hours = date_time_in.getHours();
 			var minutes = date_time_in.getMinutes();
@@ -216,8 +222,12 @@
 			);
 			
          });
-		 
-		 alert("Project " + name + " Added, Starting On: " + start_date);
+		 if(navigator.notification){
+			navigator.notification.alert("Project " + name + " Added, Starting On: " + start_date, alertDismissed, "New Project Created", "Continue");
+		 }
+		 else{
+		 	alert("Project " + name + " Added, Starting On: " + start_date);
+		 }
       }
 	  
 	  jeep.webdb.addProjectDataCapture = function(proj_input_id, user_id, user_submission_num, project_id, value, cur_lat, cur_long) {
@@ -228,7 +238,7 @@
 			var date_time_created = new Date();
 			var date_time_in = new Date();
 			var year = date_time_in.getFullYear();
-			var month = date_time_in.getMonth();
+			var month = date_time_in.getMonth() + 1;
 			var day = date_time_in.getDate();
 			var hours = date_time_in.getHours();
 			var minutes = date_time_in.getMinutes();
@@ -314,7 +324,7 @@
 			
 			var date_time_in = new Date();
 			var year = date_time_in.getFullYear();
-			var month = date_time_in.getMonth();
+			var month = date_time_in.getMonth() + 1;
 			var day = date_time_in.getDate();
 			var hours = date_time_in.getHours();
 			var minutes = date_time_in.getMinutes();
@@ -356,7 +366,7 @@
 			
 			var date_time_in = new Date();
 			var year = date_time_in.getFullYear();
-			var month = date_time_in.getMonth();
+			var month = date_time_in.getMonth() + 1;
 			var day = date_time_in.getDate();
 			var hours = date_time_in.getHours();
 			var minutes = date_time_in.getMinutes();
@@ -376,7 +386,7 @@
 			
 			var date_time_in = new Date();
 			var year = date_time_in.getFullYear();
-			var month = date_time_in.getMonth();
+			var month = date_time_in.getMonth() + 1;
 			var day = date_time_in.getDate();
 			var hours = date_time_in.getHours();
 			var minutes = date_time_in.getMinutes();
@@ -394,7 +404,88 @@
       }
       
       jeep.webdb.onError = function(tx, e) {
-        alert("There has been an error: " + e.message);
+		  
+		  if (e == 0){
+				// UNKNOWN_ERR
+				if(navigator.notification){
+					navigator.notification.alert("The transaction failed for reasons unrelated to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				 }
+				 else{
+					alert("The transaction failed for reasons unrelated to the database. \nTry Closing the App and Downloading the projects again");
+				 }
+				
+			}
+			else if(e == 1){
+				// DATABASE_ERR
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed for database reasons. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				 }
+				 else{
+					alert("The statement failed for database reasons. \nTry Closing the App and Downloading the projects again");
+				 }
+			}
+			else if (e == 2) {
+				// Version number mismatch.
+				if(navigator.notification){
+					navigator.notification.alert("Invalid database version. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Invalid database version. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else if(e == 3){
+				// TOO_LARGE_ERR
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because the data returned from the database was too large. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because the data returned from the database was too large. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else if(e == 4){
+				// QUOTA_ERR
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else if(e == 5){
+				// SYNTAX_ERR
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else if(e == 6){
+				// CONSTRAINT_ERR
+				if(navigator.notification){
+					navigator.notification.alert("Statement failed due to a constraint failure. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Statement failed due to a constraint failure. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else if(e == 7){
+				// TIMEOUT_ERR
+				if(navigator.notification){
+					navigator.notification.alert("A lock for the transaction could not be obtained in a reasonable time. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("A lock for the transaction could not be obtained in a reasonable time. \nTry Closing the App and Downloading the projects again");
+				}
+			}
+			else {
+				if(navigator.notification){
+					navigator.notification.alert("Unknown error "+e+". \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Unknown error "+e+". \nTry Closing the App and Downloading the projects again");
+				}
+			}
       }
       
       jeep.webdb.onSuccess = function(tx, r) {
@@ -406,13 +497,11 @@
 		jeep.webdb.getAllProjects(loadAllProjects);
 		jeep.webdb.getAllProjects(loadAllProjectsForData);
 		jeep.webdb.getAllInputInfo(loadAllInputInfo);
-		// jeep.webdb.getAllCapData(loadAllCapData);
 		
       }
 	  
 	  jeep.webdb.onChangeSuccess = function(tx, r) {
         // re-render the data.
-		jeep.webdb.getAllCapData(loadAllCapData);
       }
 	  
 	  jeep.webdb.getAllUsers = function(renderFunc) {
@@ -427,15 +516,6 @@
         var db = jeep.webdb.db;
         db.transaction(function(tx) {  
           tx.executeSql("SELECT * FROM `project_data_capture` INNER JOIN `user` ON user.id = project_data_capture.user_id ", [], renderFunc,
-              jeep.webdb.onError);
-        });
-      }
-	  
-	  jeep.webdb.getAllCapData = function(renderFunc) {
-        var db = jeep.webdb.db;
-        db.transaction(function(tx) {
-		  var project_id = document.getElementById('project_id').value;
-          tx.executeSql("SELECT DISTINCT `Tet`.`user_submission_num`, `Tet`.`user_id`, `input_name`, `value`, `cur_lat`, `cur_long`, `date_time_created` FROM (SELECT DISTINCT `project_data_capture`.`user_submission_num`,`project_data_capture`.`user_id` FROM `project_data_capture`) AS Tet CROSS JOIN `proj_input` INNER JOIN `input_info` ON `input_info`.`id` = `proj_input`.`input_info_id` LEFT JOIN `project_data_capture` ON `project_data_capture`.`proj_input_id` = `proj_input`.`id` AND `Tet`.`user_id` = `project_data_capture`.`user_id` AND `project_data_capture`.`user_submission_num` = `Tet`.`user_submission_num` WHERE `project_data_capture`.`project_id` = ? OR `project_data_capture`.`project_id` IS NULL ORDER BY `Tet`.user_id, `Tet`.user_submission_num, value ASC", [project_id], renderFunc,
               jeep.webdb.onError);
         });
       }
@@ -644,146 +724,8 @@
         }
 		rowOutput += '</fieldset>';
 		$("#select_inputs_area").html('').append(rowOutput).trigger('create');
+		fieldset_id = 1;
 		$.mobile.loading( "hide" );
-      }
-	  
-	  function loadAllCapData(tx, rs) {
-		
-		var last_user_id = 0;
-		var last_user_sub = 0;
-		
-		var row_array_full = '[{}';
-		var row_array = {};
-		
-		var total_subs =0;
-		
-		for (var i=0; i < rs.rows.length; i++) {
-			// console.log("For loop pos: "+i);
-			if(last_user_id == rs.rows.item(i).user_id){
-				
-				if(last_user_sub == rs.rows.item(i).user_submission_num){
-					row_array[rs.rows.item(i).input_name] = rs.rows.item(i).value;
-					row_array['cur_lat'] = rs.rows.item(i).cur_lat;
-					row_array['cur_long'] = rs.rows.item(i).cur_long;
-					row_array['date_time_created'] = rs.rows.item(i).date_time_created;
-					last_user_id = rs.rows.item(i).user_id;
-					last_user_sub = rs.rows.item(i).user_submission_num;
-					// console.log("If 2 Input:\n");
-					// console.log(row_array);
-				}
-				else{
-					row_array_full[row_array_full.length] +="," + JSON.stringify(row_array);
-					// console.log(row_array.length);
-					// console.log(row_array_full);
-					total_subs++;
-					
-					// console.log("total_subs: " + total_subs);
-					row_array[rs.rows.item(i).input_name] = rs.rows.item(i).value;
-					row_array['cur_lat'] = rs.rows.item(i).cur_lat;
-					row_array['cur_long'] = rs.rows.item(i).cur_long;
-					row_array['date_time_created'] = rs.rows.item(i).date_time_created;
-					last_user_id = rs.rows.item(i).user_id;
-					// console.log("Else 2 Input:");
-					// console.log(row_array);
-				}
-				
-			}
-			else{
-				row_array_full += "," + JSON.stringify(row_array);
-				// console.log(row_array.length);
-				// console.log(row_array_full);
-				total_subs++;
-				
-				// console.log("total_subs: " + total_subs);
-				row_array[rs.rows.item(i).input_name] = rs.rows.item(i).value;
-				row_array['cur_lat'] = rs.rows.item(i).cur_lat;
-				row_array['cur_long'] = rs.rows.item(i).cur_long;
-				row_array['date_time_created'] = rs.rows.item(i).date_time_created;
-				last_user_id = rs.rows.item(i).user_id;
-				// console.log("Else Input:");
-				// console.log(row_array);
-			}
-			
-        }
-		row_array_full += "," + JSON.stringify(row_array);
-		row_array_full += ']';
-		// console.log(row_array_full);
-		
-		var json_array_full = JSON.parse(row_array_full);
-		
-		// console.log(Object.keys(json_array_full[2]));
-		// console.log("\n");
-		var jasonKeys = Object.keys(json_array_full[2]);
-		
-		var dataTable = '<tr>';
-		for(var p = 0; p < jasonKeys.length; p++){
-			dataTable += "<th>" + jasonKeys[p] + "</th>";
-		}
-		dataTable += '</tr><tr>';
-		// console.log(dataTable);
-		for(var k = 2; k < json_array_full.length; k++){
-		
-			for(var l = 0; l < jasonKeys.length; l++){
-				dataTable += "<th>" +  (json_array_full[k][jasonKeys[l]])+ "</td>";
-			}
-			dataTable += '</tr><tr>';
-		}
-		dataTable += '</tr>';
-		
-		// $("#totalSubs").html('').append(total_subs).trigger('create');
-		$("#render_data").html('').append(dataTable).trigger('create');
-		/*
-		//json_response[total_subs] = row_array;
-		console.log("\n");
-		console.log("Subs: " + total_subs + "\nOriginal Data \n");
-		console.log("KEYS:\n"+Object.keys(json_response[0]));
-		
-		var keysArr = String(Object.keys(json_response[0])).split(",");
-		
-		console.log(keysArr);
-		console.log(keysArr.length);
-		
-		// console.log(json_response[0][keysArr[0]]);
-		console.log("\n\n");
-		
-		
-		for (var k=0; k < json_response.length; k++) {
-			
-			//for(var l=0; l< keysArr.length; l++){
-				console.log(json_response[k][keysArr[0]]);
-			//}
-		}
-		
-		
-		
-		/*
-		if(lasttitle.indexOf(rs.rows.item(i).input_name) == -1){
-			  rowOutput += renderCapDatahead(rs.rows.item(i));
-			  lasttitle.push(rs.rows.item(i).input_name);
-		  }
-		
-		rowOutput += "</tr><tr>";
-		
-        for (var j=0; j < rs.rows.length; j++) {
-		
-		  if(lastsub == rs.rows.item(j).user_submission_num){
-			  rowOutput += renderCapDataRow(rs.rows.item(j));
-			  lastsub = rs.rows.item(j).user_submission_num;
-			  total_subs++;
-		  }
-		  else{
-			  rowOutput += "</tr>";
-			  rowOutput += "<tr>";
-			  rowOutput += renderCapDataRow(rs.rows.item(j));
-			  lastsub = rs.rows.item(j).user_submission_num;
-			  total_subs++;
-		  }
-        }
-        rowOutput += "</tr>";
-        //render_data.innerHTML = rowOutput;
-		$("#render_data").html('').append(rowOutput).trigger('create');
-		$("#totalSubs").html('').append(total_subs).trigger('create');
-		*/
       }
 	  
 	  function loadCurrentUserId(tx, rs) {
@@ -812,10 +754,10 @@
 	  
 	  function renderProjectsForData(row) {
 		  if(row.project_logo != "" ){
-		  	return '<li onclick="chosenProject('+row.id+')" class="btnBigger" data-theme="d"><a href="#view_data" data-transition="slide"> <img src="'+row.project_logo+'"><h2>'+ row.name  +'</h2></a></li>';
+		  	return '<li class="btnBigger show-page-loading-msg-gen" data-theme="d" onclick="setTimeout(function(){chosenProject('+row.id+')},100)"><a href="#view_data" data-transition="slide"> <img src="'+row.project_logo+'"><h2>'+ row.name  +'</h2></a></li>';
 		  }
 		  else{
-        	return '<li onclick="chosenProject('+row.id+')" class="btnBigger" data-theme="d"><a href="#view_data" data-transition="slide"><img src="img/proj_img.png"><h2>'+ row.name  +'</h2></a></li>';
+        	return '<li  class="btnBigger show-page-loading-msg-gen" data-theme="d"><a href="#view_data" data-transition="slide" onclick="setTimeout(function(){chosenProject('+row.id+')},100)"><img src="img/proj_img.png"><h2>'+ row.name  +'</h2></a></li>';
 		  }
       }
 	  
@@ -855,9 +797,9 @@
 		   var cur_project_id = document.getElementById('project_id').value;
 		   var cur_user_id = document.getElementById('user_id').value;
 		// alert('Loaded');
-		if(row.data_type == "radio"){	
+		if(row.data_type == "radio"){
 			if(row.required = 1){
-				return "<label for='"+row.label+"_"+row.id+"'>"+row.label+" * </label><input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' required>";
+				return "<label for='"+row.label+"_"+row.id+"'>"+row.label+" * </label><input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' required='required' data-errormessage='This Is Required.'>";
 			}
 			else{
 				return "<label for='"+row.label+"_"+row.id+"' >"+row.label+"</label><input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"'>";
@@ -865,7 +807,7 @@
 		}
 		else if(row.data_type == "checkbox"){
 			if(row.required = 1){
-				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' data-role='input' data-theme='d' required /><label for='"+row.label+"_"+row.id+"'>"+row.label+" * </label>";
+				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' data-role='input' data-theme='d' required='required'  data-errormessage='This Is Required.' /><label for='"+row.label+"_"+row.id+"'>"+row.label+" * </label>";
 			}
 			else{
 				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' value='"+row.label+"' id='"+row.label+"_"+row.id+"' data-role='input' data-theme='d' /><label for='"+row.label+"_"+row.id+"'>"+row.label+"</label>";
@@ -873,7 +815,7 @@
 		}
 		else{
 			if(row.required = 1){
-				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' placeholder='"+row.label+" * ' data-role='input' data-theme='d' required />";
+				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' placeholder='"+row.label+" * ' data-role='input' data-theme='d' required='required' data-errormessage='This Is Required.'/>";
 			}
 			else{
 				return "<input onchange='addProjectDataCapture(" + row.id  + ", " + cur_user_id  + ", " + cur_project_id  + ",this.value)' type='" + row.data_type  + "' name='"+row.input_name+"' placeholder='"+row.label+"' data-role='input' data-theme='d' />";
@@ -885,7 +827,12 @@
       function init() {
 		try {
 			if (!window.openDatabase) {
-				alert('Databases are not supported in this browser.');
+			 if(navigator.notification){
+				navigator.notification.alert("Databases are not supported in this device", alertDismissed, "Local Database Error", "OK");
+			 }
+			 else{
+				alert('Databases are not supported in this device.');
+			 }
 			} else {
 				jeep.webdb.open();
 				jeep.webdb.createTables();
@@ -896,79 +843,89 @@
 				jeep.webdb.getAllProjects(loadAllProjectsForData);
 				jeep.webdb.getAllProjects(loadAllProjectsForUser);
 				jeep.webdb.getAllInputInfo(loadAllInputInfo);
-				jeep.webdb.getAllCapData(loadAllCapData);
-				
-				if(navigator.onLine){
-					var confirmloadServProject = confirm("Get the projects information from the server?\nTo ensure that you get the latest projects");
-		
-					if (confirmloadServProject == true) {
-						theme = "d" || $.mobile.loader.prototype.options.theme,
-						msgText = "Downloading Information From Server This May Take A While"  || $.mobile.loader.prototype.options.text,
-						textVisible = "true" || $.mobile.loader.prototype.options.textVisible,
-						textonly = "false";
-						html = "";
-						$.mobile.loading( "show", {
-								text: msgText,
-								textVisible: textVisible,
-								theme: theme,
-								textonly: textonly,
-								html: html
-						});
-						setTimeout(function(){
-							getAllUserDataCap();
-							loadServAdmin();
-							loadServDataType();
-							loadServInputInfo();
-							loadServProjInput();
-							loadServSuperUser();
-							loadServProject();
-						},100);
-					} else {
-						alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
-					}
-					
-				}
-				else{
-					alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device");
-				}
-				
 			}
 		} catch(e) {
 			// Error handling code goes here.
 			if (e == 0){
 				// UNKNOWN_ERR
-				alert("The transaction failed for reasons unrelated to the database.");
+				if(navigator.notification){
+					navigator.notification.alert("The transaction failed for reasons unrelated to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				 }
+				 else{
+					alert("The transaction failed for reasons unrelated to the database. \nTry Closing the App and Downloading the projects again");
+				 }
+				
 			}
 			else if(e == 1){
 				// DATABASE_ERR
-				alert("The statement failed for database reasons.");
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed for database reasons. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				 }
+				 else{
+					alert("The statement failed for database reasons. \nTry Closing the App and Downloading the projects again");
+				 }
 			}
 			else if (e == 2) {
 				// Version number mismatch.
-				alert("Invalid database version.");
+				if(navigator.notification){
+					navigator.notification.alert("Invalid database version. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Invalid database version. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else if(e == 3){
 				// TOO_LARGE_ERR
-				alert("The statement failed because the data returned from the database was too large.");
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because the data returned from the database was too large. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because the data returned from the database was too large. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else if(e == 4){
 				// QUOTA_ERR
-				alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database.");
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else if(e == 5){
 				// SYNTAX_ERR
-				alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database.");
+				if(navigator.notification){
+					navigator.notification.alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("The statement failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else if(e == 6){
 				// CONSTRAINT_ERR
-				alert("Statement failed due to a constraint failure.");
+				if(navigator.notification){
+					navigator.notification.alert("Statement failed due to a constraint failure. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Statement failed due to a constraint failure. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else if(e == 7){
 				// TIMEOUT_ERR
-				alert("A lock for the transaction could not be obtained in a reasonable time.");
+				if(navigator.notification){
+					navigator.notification.alert("A lock for the transaction could not be obtained in a reasonable time. \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("A lock for the transaction could not be obtained in a reasonable time. \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			else {
-				alert("Unknown error "+e+".");
+				if(navigator.notification){
+					navigator.notification.alert("Unknown error "+e+". \nTry Closing the App and Downloading the projects again", alertDismissed, "Local Database Error", "OK");
+				}
+				else{
+					alert("Unknown error "+e+". \nTry Closing the App and Downloading the projects again");
+				}
 			}
 			return;
 		}
@@ -1013,8 +970,12 @@
 			inputsSelected += select_inputs_checkboxes[i].value + '\n';
 		  }
 		}
-		
-		alert("The Following Inputs have been added to "+ $("#project_select option:selected").html()+" \n " + inputsSelected);
+		if(navigator.notification){
+			navigator.notification.alert("The Following Inputs have been added to "+ $("#project_select option:selected").html()+" \n " + inputsSelected, alertDismissed, "Input Added", "Continue");
+		}
+		else{
+			alert("The Following Inputs have been added to "+ $("#project_select option:selected").html()+" \n " + inputsSelected);
+		}
       }
 	  
 	  function addProject() {
@@ -1046,7 +1007,12 @@
 			email = '';
 		}
 		else{
-			alert("Passwords do not match");
+			if(navigator.notification){
+				navigator.notification.alert("Passwords do not match", alertDismissed, "Passwords Error", "OK");
+			}
+			else{
+				alert("Passwords do not match");
+			}
 		}
       }
 	  
@@ -1065,7 +1031,12 @@
 			email = '';
 		}
 		else{
-			alert("Passwords do not match");
+			if(navigator.notification){
+				navigator.notification.alert("Passwords do not match", alertDismissed, "Passwords Error", "OK");
+			}
+			else{
+				alert("Passwords do not match");
+			}
 		}
       }
 	  
@@ -1103,7 +1074,14 @@
 		if(correct == true){
 			$("#cur_subs").html('').append(user_submission_num).trigger('create');
 			user_submission_num++;
-			alert("Submission Saved");
+			
+			if(navigator.notification){
+				navigator.notification.alert("Submission Saved", alertDismissed, "Information Captured", "Great");
+			}
+			else{
+				alert("Submission Saved");
+			}
+			
 			document.getElementById('userSubnum').value = user_submission_num;
 			var elements = document.getElementById('projectItems').getElementsByTagName('input');
 
@@ -1149,559 +1127,1093 @@
 	  
 	  function setServProject(){
 		
+		if(navigator.onLine){
 		
-		var admin_id = document.getElementById("admin_id").value;
-		
-		var name = document.getElementById("project_name").value;
-		var big_logo = document.getElementById("big_logo").files[0];
-		var small_logo = document.getElementById("small_logo").files[0];
-		var project_logo = document.getElementById("project_logo").files[0];
-		var background = document.getElementById("background").files[0];
-		var start_date = document.getElementById("start_date").value;
-		var end_date = document.getElementById("end_date").value;
-		
-		var formdata = new FormData();
-		
-		formdata.append("admin_id", admin_id);
-		
-		formdata.append("name", name);
-		formdata.append("big_logo", big_logo);
-		formdata.append("small_logo", small_logo);
-		formdata.append("project_logo", project_logo);
-		formdata.append("background", background);
-		formdata.append("start_date", start_date);
-		formdata.append("end_date", end_date);
-		
-		console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_project.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				//console.log(data, textStatus, jqXHR);
-				
-				document.getElementById("project_name").value = "";
-				document.getElementById("big_logo").files[0] = "";
-				document.getElementById("small_logo").files[0] = "";
-				document.getElementById("project_logo").files[0] = "";
-				document.getElementById("background").files[0] = "";
-				document.getElementById("start_date").value = "";
-				document.getElementById("end_date").value = "";
-				
-				$.mobile.loading( "hide" );
-				alert("Uploaded to Server");
-				$.mobile.changePage( "#link_input_to_proj", { transition: "flow", changeHash: false });
-			},
-			error:function(xhr){
-				$.mobile.loading( "hide" );
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			var admin_id = document.getElementById("admin_id").value;
+			
+			var name = document.getElementById("project_name").value;
+			var big_logo = document.getElementById("big_logo").files[0];
+			var small_logo = document.getElementById("small_logo").files[0];
+			var project_logo = document.getElementById("project_logo").files[0];
+			var background = document.getElementById("background").files[0];
+			var start_date = document.getElementById("start_date").value;
+			var end_date = document.getElementById("end_date").value;
+			
+			var formdata = new FormData();
+			
+			formdata.append("admin_id", admin_id);
+			
+			formdata.append("name", name);
+			formdata.append("big_logo", big_logo);
+			formdata.append("small_logo", small_logo);
+			formdata.append("project_logo", project_logo);
+			formdata.append("background", background);
+			formdata.append("start_date", start_date);
+			formdata.append("end_date", end_date);
+			
+			console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_project.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					//console.log(data, textStatus, jqXHR);
+					loadServProject();
+					document.getElementById("project_name").value = "";
+					document.getElementById("big_logo").files[0] = "";
+					document.getElementById("small_logo").files[0] = "";
+					document.getElementById("project_logo").files[0] = "";
+					document.getElementById("background").files[0] = "";
+					document.getElementById("start_date").value = "";
+					document.getElementById("end_date").value = "";
+					
+					$.mobile.loading( "hide" );
+					if(navigator.notification){
+						navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
+					}
+					else{
+						alert("Uploaded to Server");
+					}
+					$.mobile.changePage( "#link_input_to_proj", { transition: "flow", changeHash: false });
+				},
+				error:function(xhr){
+					$.mobile.loading( "hide" );
+					
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}
 		
 		
 	  }
 	  
 	  function setServDataType(){
 		
-		var data_type = document.getElementById("data_type").value;
+		if(navigator.onLine){
+			var data_type = document.getElementById("data_type").value;
+			
+			var formdata = new FormData();
+			
+			formdata.append("data_type", data_type);
+			
+			console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_data_type.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					loadServDataType();
+					jeep.webdb.getAllDataTypes(loadAllDataTypes);
+					data_type = '';
+					if(navigator.notification){
+						navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
+					}
+					else{
+						alert("Uploaded to Server");
+					}
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
 		
-		var formdata = new FormData();
-		
-		formdata.append("data_type", data_type);
-		
-		console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_data_type.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				alert("Uploaded to Server");
-				data_type = '';
-				loadServDataType();
-			},
-			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
-		
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}
 		
 	  }
 	  
 	  function setServNewInput(){
 		
-		var data_type_select = document.getElementById("data_type_select").value;
-		var input_label = document.getElementById("input_label").value;
-		var input_group_name = document.getElementById("input_group_name").value;
-		var rec_feild = document.getElementById("rec_feild").value;
+		if(navigator.onLine){
+			var data_type_select = document.getElementById("data_type_select").value;
+			var input_label = document.getElementById("input_label").value;
+			var input_group_name = document.getElementById("input_group_name").value;
+			var rec_feild = document.getElementById("rec_feild").value;
+			
+			var formdata = new FormData();
+			
+			formdata.append("data_type_select", data_type_select);
+			formdata.append("input_label", input_label);
+			formdata.append("input_group_name", input_group_name);
+			formdata.append("rec_feild", rec_feild);
+			
+			console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_input_info.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					//console.log(data, textStatus, jqXHR);
+					loadServInputInfo();
+					jeep.webdb.getAllInputInfo(loadAllInputInfo);
+					input_label = '';
+					input_group_name = '';
+					if(navigator.notification){
+						navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
+					}
+					else{
+						alert("Uploaded to Server");
+					}
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
 		
-		var formdata = new FormData();
-		
-		formdata.append("data_type_select", data_type_select);
-		formdata.append("input_label", input_label);
-		formdata.append("input_group_name", input_group_name);
-		formdata.append("rec_feild", rec_feild);
-		
-		console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_input_info.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				//console.log(data, textStatus, jqXHR);
-				alert("Uploaded to Server");
-				input_label = '';
-				input_group_name = '';
-				loadServInputInfo();
-			},
-			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+	  	}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
-		
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}
 		
 	  }
 	  
 	  function setServProjInput(){
 		
-		var project_select = document.getElementById("project_select").value;
+		if(navigator.onLine){
 		
-		var select_inputs_checkboxes = document.getElementsByName('select_inputs');
-		
-		var select_inputs_checkboxes_arr = [];
-		
-		
-		for (var i=0;i<select_inputs_checkboxes.length;i++) {
-		  if (select_inputs_checkboxes[i].checked){
-			select_inputs_checkboxes_arr.push(select_inputs_checkboxes[i].value);
-			select_inputs_checkboxes_arr.push(select_inputs_checkboxes[i].getAttribute('data-viewpos'));
-		  }
-		}
-		
-		var json_arr = JSON.stringify(select_inputs_checkboxes_arr);
-		
-		var formdata = new FormData();
-		
-		formdata.append("project_select", project_select);
-		formdata.append("select_inputs_checkboxes_arr", select_inputs_checkboxes_arr);
-		
-		console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_proj_input.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				console.log(data);
-				alert("Uploaded to Server");
-				loadServProjInput();
-				$.mobile.changePage( "#start", { transition: "flow", changeHash: false });
-				//addProjectInput
-			},
-			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+			var project_select = document.getElementById("project_select").value;
+			
+			var select_inputs_checkboxes = document.getElementsByName('select_inputs');
+			
+			var select_inputs_checkboxes_arr = [];
+			
+			
+			for (var i=0;i<select_inputs_checkboxes.length;i++) {
+			  if (select_inputs_checkboxes[i].checked){
+				select_inputs_checkboxes_arr.push(select_inputs_checkboxes[i].value);
+				select_inputs_checkboxes_arr.push(select_inputs_checkboxes[i].getAttribute('data-viewpos'));
+			  }
 			}
-		});
-		
-		
+			
+			var json_arr = JSON.stringify(select_inputs_checkboxes_arr);
+			
+			var formdata = new FormData();
+			
+			formdata.append("project_select", project_select);
+			formdata.append("select_inputs_checkboxes_arr", select_inputs_checkboxes_arr);
+			
+			console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_proj_input.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					console.log(data);
+					if(navigator.notification){
+						navigator.notification.alert("Uploaded to Server", alertDismissed, "Saved", "Great");
+					}
+					else{
+						alert("Uploaded to Server");
+					}
+					loadServProjInput();
+					setTimeout(function(){
+						$.mobile.changePage( "#start", { transition: "flow", changeHash: false });
+					}, 100);
+					
+					//addProjectInput
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}		
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
+			}
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}
+					
 		
 	  }
 	  
 	  
 	function loadServProject(){
 		
-		// alert("loadServProject Fired");
-		
-		var project;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_project.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-			complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				project = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE project", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS project('id' INTEGER PRIMARY KEY ASC, 'admin_id' INTEGER, 'name' VARCHAR(255), 'big_logo' VARCHAR(255), 'small_logo' VARCHAR(255), 'project_logo' VARCHAR(255), 'background' VARCHAR(255), 'start_date' DATETIME, 'end_date' DATETIME, 'date_time_created' DATETIME)", []);
-				});
-				
-				
-				$.each(project, function(idx, obj) {
+		if(navigator.onLine){
+			// alert("loadServProject Fired");
+			
+			var project;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_project.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					project = data;
 					
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO project(id, admin_id, name, big_logo, small_logo, project_logo, background, start_date, end_date, date_time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-						[obj.id, obj.admin_id, obj.name, obj.big_logo, obj.small_logo, obj.project_logo, obj.background, obj.start_date, obj.end_date, obj.date_time_created],
-						console.log("Synced Project"),
-						console.log("Project Sync Failed")
-					);
-					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE project", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS project('id' INTEGER PRIMARY KEY ASC, 'admin_id' INTEGER, 'name' VARCHAR(255), 'big_logo' VARCHAR(255), 'small_logo' VARCHAR(255), 'project_logo' VARCHAR(255), 'background' VARCHAR(255), 'start_date' DATETIME, 'end_date' DATETIME, 'date_time_created' DATETIME)", []);
 					});
 					
-				});
-				
-				jeep.webdb.getAllprojectItems(loadprojectItems);
-				jeep.webdb.getAllProjects(loadAllProjectsForUser);
-				jeep.webdb.getAllDataTypes(loadAllDataTypes);
-				jeep.webdb.getAllProjects(loadAllProjects);
-				jeep.webdb.getAllInputInfo(loadAllInputInfo);
-				
-			},
-			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-				
+					
+					$.each(project, function(idx, obj) {
+						
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO project(id, admin_id, name, big_logo, small_logo, project_logo, background, start_date, end_date, date_time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+							[obj.id, obj.admin_id, obj.name, obj.big_logo, obj.small_logo, obj.project_logo, obj.background, obj.start_date, obj.end_date, obj.date_time_created],
+							console.log("Synced Project"),
+							console.log("Project Sync Failed")
+						);
+						
+						});
+						
+					});
+					
+					jeep.webdb.getAllprojectItems(loadprojectItems);
+					jeep.webdb.getAllProjects(loadAllProjectsForUser);
+					jeep.webdb.getAllDataTypes(loadAllDataTypes);
+					jeep.webdb.getAllProjects(loadAllProjects);
+					jeep.webdb.getAllInputInfo(loadAllInputInfo);
+					
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+					
+				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}
 		
 		
 	}
 	
 	function loadServAdmin(){
-		
-		var admin;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_admin.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				admin = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE admin", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS admin('id' INTEGER PRIMARY KEY ASC, 'super_user_id' INTEGER, 'user_name' VARCHAR(255), 'password' VARCHAR(255), 'active' INTEGER, 'email' VARCHAR(255))", []);
-				});
-				
-				
-				$.each(admin, function(idx, obj) {
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO admin(id, super_user_id, user_name, password, active, email) VALUES (?, ?, ?, ?, ?, ?)",
-						[obj.id, obj.super_user_id, obj.user_name, obj.password , obj.active , obj.email],
-						console.log("Synced Admin"),
-						console.log("Admin Sync Failed")
-					);
+		if(navigator.onLine){
+			var admin;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_admin.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					admin = data;
 					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE admin", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS admin('id' INTEGER PRIMARY KEY ASC, 'super_user_id' INTEGER, 'user_name' VARCHAR(255), 'password' VARCHAR(255), 'active' INTEGER, 'email' VARCHAR(255))", []);
 					});
 					
-				});
-			},
-			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					
+					$.each(admin, function(idx, obj) {
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO admin(id, super_user_id, user_name, password, active, email) VALUES (?, ?, ?, ?, ?, ?)",
+							[obj.id, obj.super_user_id, obj.user_name, obj.password , obj.active , obj.email],
+							console.log("Synced Admin"),
+							console.log("Admin Sync Failed")
+						);
+						
+						});
+						
+					});
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}
 	  }
 	  
 	  function loadServDataType(){
 		  
-		var data_type;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_data_type.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				data_type = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE data_type", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS data_type('id' INTEGER PRIMARY KEY ASC, 'data_type' VARCHAR(255))", []);
-				});
-				
-				
-				$.each(data_type, function(idx, obj) {
+		  if(navigator.onLine){
+			var data_type;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_data_type.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					data_type = data;
 					
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO data_type(id, data_type) VALUES (?, ?)",
-						[obj.id, obj.data_type],
-						console.log("Synced Data Type"),
-						console.log("Data Type Sync Failed")
-					);
-					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE data_type", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS data_type('id' INTEGER PRIMARY KEY ASC, 'data_type' VARCHAR(255))", []);
 					});
 					
-				});
-			},
-			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					
+					$.each(data_type, function(idx, obj) {
+						
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO data_type(id, data_type) VALUES (?, ?)",
+							[obj.id, obj.data_type],
+							console.log("Synced Data Type"),
+							console.log("Data Type Sync Failed")
+						);
+						
+						});
+						
+					});
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}
 	  }
 	  
 	  function loadServInputInfo(){
-		var input_info;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_input_info.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				input_info = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE input_info", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS input_info('id' INTEGER PRIMARY KEY ASC, 'data_type_id' INTEGER, 'label' VARCHAR(255), 'required' INTEGER, 'input_name' VARCHAR(255))", []);
-				});
-				
-				
-				$.each(input_info, function(idx, obj) {
+		if(navigator.onLine){
+			var input_info;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_input_info.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					input_info = data;
 					
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO input_info(id, data_type_id, label, required, input_name) VALUES (?, ? , ?, ?, ?)",
-						[obj.id, obj.data_type_id, obj.label, obj.required, obj.input_name],
-						console.log("Synced Input Info"),
-						console.log("Input Info Sync Failed")
-					);
-					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE input_info", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS input_info('id' INTEGER PRIMARY KEY ASC, 'data_type_id' INTEGER, 'label' VARCHAR(255), 'required' INTEGER, 'input_name' VARCHAR(255))", []);
 					});
 					
-				});
-			},
-			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					
+					$.each(input_info, function(idx, obj) {
+						
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO input_info(id, data_type_id, label, required, input_name) VALUES (?, ? , ?, ?, ?)",
+							[obj.id, obj.data_type_id, obj.label, obj.required, obj.input_name],
+							console.log("Synced Input Info"),
+							console.log("Input Info Sync Failed")
+						);
+						
+						});
+						
+					});
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}
 		
 	  }
 	  
 	  function loadServProjInput(){
-		var proj_input;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_proj_input.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				proj_input = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE proj_input", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS proj_input('id' INTEGER PRIMARY KEY ASC, 'input_info_id' INTEGER, 'project_id' INTEGER, 'viewpos' INTEGER)", []);
-				});
-				
-				
-				$.each(proj_input, function(idx, obj) {
+		if(navigator.onLine){
+			var proj_input;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_proj_input.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					proj_input = data;
 					
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO proj_input(id, input_info_id, project_id, viewpos) VALUES (?, ?, ?, ?)",
-						[obj.id, obj.input_info_id, obj.project_id, obj.viewpos],
-						console.log("Synced Proj Input"),
-						console.log("Proj Input Sync Failed")
-					);
-					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE proj_input", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS proj_input('id' INTEGER PRIMARY KEY ASC, 'input_info_id' INTEGER, 'project_id' INTEGER, 'viewpos' INTEGER)", []);
 					});
 					
-				});
-			},
-			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					
+					$.each(proj_input, function(idx, obj) {
+						
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO proj_input(id, input_info_id, project_id, viewpos) VALUES (?, ?, ?, ?)",
+							[obj.id, obj.input_info_id, obj.project_id, obj.viewpos],
+							console.log("Synced Proj Input"),
+							console.log("Proj Input Sync Failed")
+						);
+						
+						});
+						
+					});
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}
 	  }
 	  
 	  function loadServSuperUser(){
-		var super_user;
-		$.ajax({
-			async: false,
-			dataType:"json",
-			type: "GET",
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"get_super_user.php",
-			contentType: "application/json; charset=utf-8",
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data){
-				console.log(data);
-				super_user = data;
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE super_user", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS super_user('id' INTEGER PRIMARY KEY ASC, 'user_name' VARCHAR(255), 'password' VARCHAR(255), 'email' VARCHAR(255))", []);
-				});
-				
-				
-				$.each(super_user, function(idx, obj) {
+		if(navigator.onLine){
+			var super_user;
+			$.ajax({
+				async: false,
+				dataType:"json",
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_super_user.php",
+				contentType: "application/json; charset=utf-8",
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data){
+					console.log(data);
+					super_user = data;
 					
-					jeep.webdb.db.transaction(function(tx){
-					tx.executeSql("INSERT INTO super_user(id, user_name, password, email) VALUES (?, ?, ?, ?)",
-						[obj.id, obj.username, obj.password, obj.email],
-						console.log("Synced Super User"),
-						console.log("Super User Sync Failed")
-					);
-					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE super_user", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS super_user('id' INTEGER PRIMARY KEY ASC, 'user_name' VARCHAR(255), 'password' VARCHAR(255), 'email' VARCHAR(255))", []);
 					});
 					
-				});
-			},
-			error:function(xhr){
-				alert("An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					
+					$.each(super_user, function(idx, obj) {
+						
+						jeep.webdb.db.transaction(function(tx){
+						tx.executeSql("INSERT INTO super_user(id, user_name, password, email) VALUES (?, ?, ?, ?)",
+							[obj.id, obj.username, obj.password, obj.email],
+							console.log("Synced Super User"),
+							console.log("Super User Sync Failed")
+						);
+						
+						});
+						
+					});
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the latest information", alertDismissed, "Offline", "OK");
 			}
-		});
-		
-		
+			else{
+				alert("You are offline!\nTherefore you cannot get the latest information");
+			}
+		}		
 		
 	  }
 	  
 	  function loadAllUsers(tx, rs) {
-        var rowOutput = [];
-        for (var i=0; i < rs.rows.length; i++) {
-          rowOutput.push(renderAllUsers(rs.rows.item(i)));
-        }
-		
-		//AllUsers = JSON.stringify(rowOutput);
-		AllUsers = rowOutput;
-		//console.log(AllUsers);
-		
-		var formdata = new FormData();
-		
-		formdata.append("AllUsers", AllUsers);
-		
-		//console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_users.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				console.log(data);
-				//alert("Users Uploaded to Server");
-				
-				$('#User_Sync').html('').append('Users Have Been Uploaded').trigger('create');
-			},
-			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+        if(navigator.onLine){
+			var rowOutput = [];
+			for (var i=0; i < rs.rows.length; i++) {
+			  rowOutput.push(renderAllUsers(rs.rows.item(i)));
 			}
-		});
-		
+			
+			//AllUsers = JSON.stringify(rowOutput);
+			AllUsers = rowOutput;
+			//console.log(AllUsers);
+			
+			var formdata = new FormData();
+			
+			formdata.append("AllUsers", AllUsers);
+			
+			//console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_users.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					console.log(data);
+					//alert("Users Uploaded to Server");
+					
+					$('#User_Sync').html('').append('Users Have Been Uploaded').trigger('create');
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}		
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
+			}
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}
       }
 	  	  
 	  function loadAllUsersDataCap(tx, rs) {
-        var rowOutput = [];
-        for (var i=0; i < rs.rows.length; i++) {
-          rowOutput.push(renderAllUsersDataCap(rs.rows.item(i)));
-		  console.log(rs.rows.item[0]);
-        }
-		
-		//AllUsersDataCap = JSON.stringify(rowOutput);
-		AllUsersDataCap = rowOutput;
-		//console.log(AllUsersDataCap);
-		
-		var formdata = new FormData();
-		
-		formdata.append("AllUsersDataCap", AllUsersDataCap);
-		
-		//console.log(formdata);
-		
-		$.ajax({
-			async: false,
-			type: "POST",
-			data:formdata,
-			crossDomain: true,
-			cache: false,
-			url: url_extention+"set_data_cap.php",
-			processData: false, // Don't process the files
-			contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			beforeSend : function() {$.mobile.loading('show')},
-    		complete   : function() {$.mobile.loading('hide')},
-			success: function(data, textStatus, jqXHR){
-				
-				jeep.webdb.open();
-				jeep.webdb.db.transaction(function(tx) {
-					tx.executeSql("DROP TABLE user", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS user('id' INTEGER PRIMARY KEY ASC, 'name' VARCHAR(255), 'date_time_in' DATETIME, 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_out' DATETIME)", []);
-					tx.executeSql("DROP TABLE project_data_capture", []);
-					tx.executeSql("CREATE TABLE IF NOT EXISTS project_data_capture('id' INTEGER PRIMARY KEY ASC, 'proj_input_id' INTEGER, 'user_id' INTEGER, 'user_submission_num' INTEGER, 'project_id' INTEGER, 'value' VARCHAR(255), 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_created' DATETIME)", []);
-				});
-				
-				$('#Data_Sync').html('').append('Captured Submissions Have Been Uploaded').trigger('create');
-				
-			},
-			error:function(xhr){
-				alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+        if(navigator.onLine){
+			var rowOutput = [];
+			for (var i=0; i < rs.rows.length; i++) {
+			  rowOutput.push(renderAllUsersDataCap(rs.rows.item(i)));
+			  console.log(rs.rows.item[0]);
 			}
-		});
+			
+			//AllUsersDataCap = JSON.stringify(rowOutput);
+			AllUsersDataCap = rowOutput;
+			//console.log(AllUsersDataCap);
+			
+			var formdata = new FormData();
+			
+			formdata.append("AllUsersDataCap", AllUsersDataCap);
+			
+			//console.log(formdata);
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"set_data_cap.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					
+					jeep.webdb.open();
+					jeep.webdb.db.transaction(function(tx) {
+						tx.executeSql("DROP TABLE user", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS user('id' INTEGER PRIMARY KEY ASC, 'name' VARCHAR(255), 'date_time_in' DATETIME, 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_out' DATETIME)", []);
+						tx.executeSql("DROP TABLE project_data_capture", []);
+						tx.executeSql("CREATE TABLE IF NOT EXISTS project_data_capture('id' INTEGER PRIMARY KEY ASC, 'proj_input_id' INTEGER, 'user_id' INTEGER, 'user_submission_num' INTEGER, 'project_id' INTEGER, 'value' VARCHAR(255), 'cur_lat' VARCHAR(255), 'cur_long' VARCHAR(255), 'date_time_created' DATETIME)", []);
+					});
+					
+					$('#Data_Sync').html('').append('Captured Submissions Have Been Uploaded').trigger('create');
+					
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}		
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
+			}
+			else{
+				alert("You are offline!\nTherefore you cannot update information");
+			}
+		}		
 		
-		
+      }
+	  
+	  function loadAllDataCapDynamic(pn) {
+        if(navigator.onLine){
+			
+			var project_id = document.getElementById("project_id").value;
+			
+			var formdata = new FormData();
+			
+			formdata.append("project_id", project_id);
+			formdata.append("pn", pn);
+			
+			var exportDataValueArr = [];
+			var exportDataArr = [];
+			
+			$.ajax({
+				async: false,
+				type: "POST",
+				data:formdata,
+				crossDomain: true,
+				cache: false,
+				url: url_extention+"get_data_capture_dynamic.php",
+				processData: false, // Don't process the files
+				contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+				beforeSend : function() {$.mobile.loading('show')},
+				complete   : function() {$.mobile.loading('hide')},
+				success: function(data, textStatus, jqXHR){
+					
+					// console.log(data);
+					
+					var project_data_cap = data;
+					
+					var information = '<table data-role="table" data-mode="columntoggle" class="ui-responsive table-stripe" style="width:100%; margin:auto;"><thead><tr>';
+					var labelsArr = [];
+					
+					for(var correct_view_pos in project_data_cap.Labels){
+						labelsArr[correct_view_pos] = project_data_cap.Labels[correct_view_pos];
+						information += '<th  data-priority="'+correct_view_pos+'">'+project_data_cap.Labels[correct_view_pos]+"</th>";
+					}
+					
+					information += "</tr></thead><tbody><tr>";
+					
+					for(var user in project_data_cap){
+						for(var user_sub in project_data_cap[user]){
+							information += "<tr>";
+							for(var correctPos in labelsArr){
+								if(project_data_cap[user][user_sub][correctPos] && (user != "Labels" && user != "paginationCtrls" && user != "cur_Page" && user != "estimated_Total_subs" && user != "last_Page")){
+									information += "<td>"+ project_data_cap[user][user_sub][correctPos][labelsArr[correctPos]] + "</td>" ;
+									exportDataValueArr.push(project_data_cap[user][user_sub][correctPos][labelsArr[correctPos]]);
+								}
+								else if(user != "Labels" && user != "paginationCtrls" && user != "cur_Page" && user != "estimated_Total_subs" && user != "last_Page"){
+									information +=  "<td> - </td>";
+									exportDataValueArr.push('-');
+								}
+							}
+							information += "</tr>";
+							exportDataArr.push(exportDataValueArr);
+							exportDataValueArr =[];
+						}
+					}
+					
+					// console.log(exportDataArr);
+					
+					var pageXofY = "Page " + project_data_cap.cur_Page + " of " + project_data_cap.last_Page;
+					
+					$.post(url_extention+'export_data.php', {exportDataArr: exportDataArr, pageXofY: pageXofY},function (data){
+						//console.log(data.substr(3));
+						
+						// Local Location
+						// var path = 'http://localhost/03 New Temp/';
+						// Server Live App Location
+	  					var path = "http://jeep.mi-project.info/";
+						
+						$('#download_csv').attr('href', path  + data.substr(3));
+					});
+					
+					information += "</tbody></table>";
+					information = "<div>" + project_data_cap.paginationCtrls +"</div>" + information;
+					information += "<div>" + project_data_cap.paginationCtrls +"</div>";
+					
+					var estimated_Total_subs = Math.floor(project_data_cap.estimated_Total_subs);
+					$('#download_csv').html('').append("Download " + pageXofY + " as CSV").trigger('create');
+					$('#cur_page_out_of').html('').append(pageXofY).trigger('create');
+					$('#totalSubs').html('').append(estimated_Total_subs).trigger('create');
+					$('#render_data').html(information).trigger('create');
+					
+					
+				},
+				error:function(xhr){
+					if(xhr.status == 404){
+						if(navigator.notification){
+							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
+						}
+						else{
+							alert("Server Error Page Not Found");
+						}
+					}
+					if(xhr.status == 200){
+						if(navigator.notification){
+							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
+						}
+						else{
+							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
+						}
+					}
+					
+					if(navigator.notification){
+						navigator.notification.alert("Error Downloading from Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
+					}
+					else{
+						alert("Error Downloading from Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
+						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
+					}
+				}
+			});
+		}		
+		else{
+			if(navigator.notification){
+				navigator.notification.alert("You are offline!\nTherefore you cannot get the information", alertDismissed, "Offline", "OK");
+			}
+			else{
+				alert("You are offline!\nTherefore you cannot get the information");
+			}
+		}		
 		
       }
 	  
@@ -1769,5 +2281,80 @@
 			});
 			
 			
+			
+		}
+		
+		function getAllData(){
+			if(navigator.onLine){
+				var confirmloadServProject = confirm("Get the projects information from the server?\nTo ensure that you get the latest projects");
+	
+				if (confirmloadServProject == true) {
+					theme = "d" || $.mobile.loader.prototype.options.theme,
+					msgText = "Downloading Information From Server This May Take A While"  || $.mobile.loader.prototype.options.text,
+					textVisible = "true" || $.mobile.loader.prototype.options.textVisible,
+					textonly = "false";
+					html = "";
+					$.mobile.loading( "show", {
+							text: msgText,
+							textVisible: textVisible,
+							theme: theme,
+							textonly: textonly,
+							html: html
+					});
+					setTimeout(function(){
+						getAllUserDataCap();
+						loadServAdmin();
+						loadServDataType();
+						loadServInputInfo();
+						loadServProjInput();
+						loadServSuperUser();
+						loadServProject();
+					},100);
+				} else {
+					if(navigator.notification){
+						navigator.notification.alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...", alertDismissed, "Download Error", "OK");
+					}
+					else{
+						alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
+					}
+				}
+		
+			
+			}
+			else{
+				if(navigator.notification){
+					navigator.notification.alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device", alertDismissed, "Offline", "OK");
+				}
+				else{
+					alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device");
+				}
+			}
+		}
+		
+		function sendEmail(textID){
+			var to = $("#"+textID).val();
+			var subject = $('#download_csv').html();
+			var message = $('#download_csv').attr('href');
+			
+			$.post(url_extention+'email_to.php', {to: to, subject: subject, message: message})
+				.done(function( data ) {
+					// alert( "Data Loaded: " + data );
+					
+					if(navigator.notification){
+						navigator.notification.alert(data, alertDismissed, "Email Sent", "Thanks");
+					}
+					else{
+						alert(data);
+					}
+				})
+				.fail(function() {
+					if(navigator.notification){
+						navigator.notification.alert("Error Sending Email" , alertDismissed, "Error Sending Email", "OK");
+					}
+					else{
+						alert("Error Sending Email");
+					}
+				  
+			});
 			
 		}
