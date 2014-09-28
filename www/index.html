@@ -123,6 +123,27 @@
 			jeep.webdb.open();
 			jeep.webdb.getProjectLogo(loadProjectLogo);
 			
+<<<<<<< HEAD
+=======
+		});
+		
+		$(document).on("pageshow","#user",function(){ // When entering user
+			
+			if(navigator.notification){
+				navigator.notification.confirm('Allow Us To Use Your Location?', onConfirm, 'Get User Location', ['Yes','No']);
+			}
+			else{
+				// run geolocation for form to be populated
+				var confirmLocationUse = confirm("Activate Your Location And Allow Us To Use It?");
+				
+				if (confirmLocationUse == true) {
+					latLong();
+				} else {
+					latitude = "User Declined Location";
+					longitude = "User Declined Location";
+				}
+			}
+>>>>>>> origin/master
 		});
 		
 		$(document).on("pageshow","#user",function(){ // When entering user
@@ -210,7 +231,11 @@
 		<h1>
 			Jeep
 		</h1>
+<<<<<<< HEAD
         <a href="#" class="show-page-loading-msg-gen" data-textonly="false" data-textvisible="true" data-msgtext="" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="setTimeout(function(){getAllUsers(); getAllUserDataCap();},100)">Upload Data</a>
+=======
+        <a href="#" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="getAllUsers(); getAllUserDataCap();">Upload Data</a>
+>>>>>>> origin/master
 	</div>
 	<div class="infoBox" data-role="main" data-theme="d">
 		<h2 class="headingStyle">Welcome</h2>
