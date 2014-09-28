@@ -843,10 +843,6 @@
 				jeep.webdb.getAllProjects(loadAllProjectsForData);
 				jeep.webdb.getAllProjects(loadAllProjectsForUser);
 				jeep.webdb.getAllInputInfo(loadAllInputInfo);
-<<<<<<< HEAD
-=======
-				jeep.webdb.getAllCapData(loadAllCapData);
->>>>>>> origin/master
 			}
 		} catch(e) {
 			// Error handling code goes here.
@@ -1434,7 +1430,6 @@
 					setTimeout(function(){
 						$.mobile.changePage( "#start", { transition: "flow", changeHash: false });
 					}, 100);
-<<<<<<< HEAD
 					
 					//addProjectInput
 				},
@@ -1519,92 +1514,6 @@
 						
 					});
 					
-=======
-					
-					//addProjectInput
-				},
-				error:function(xhr){
-					if(xhr.status == 404){
-						if(navigator.notification){
-							navigator.notification.alert("Page Not Found", alertDismissed, "Server Error", "Great");
-						}
-						else{
-							alert("Server Error Page Not Found");
-						}
-					}
-					if(xhr.status == 200){
-						if(navigator.notification){
-							navigator.notification.alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again", alertDismissed, "Server Error", "OK");
-						}
-						else{
-							alert("Everything Seems OK\nBut There May be some errors\nSo Check first Then Try Again");
-						}
-					}
-					
-					if(navigator.notification){
-						navigator.notification.alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again", alertDismissed, "Server Error", "OK");
-					}
-					else{
-						alert("Error Uploading to Server \nSo Check Your Changes first\nRestart The App\nCheck Your Internet Connection\nThen Try Again");
-						//alert("Error Uploading to Server \n An error " + xhr.status + " occured. \n Request Status: " + xhr.statusText);
-					}
-				}
-			});
-		}		
-		else{
-			if(navigator.notification){
-				navigator.notification.alert("You are offline!\nTherefore you cannot update information", alertDismissed, "Offline", "OK");
-			}
-			else{
-				alert("You are offline!\nTherefore you cannot update information");
-			}
-		}
-					
-		
-	  }
-	  
-	  
-	function loadServProject(){
-		
-		if(navigator.onLine){
-			// alert("loadServProject Fired");
-			
-			var project;
-			$.ajax({
-				async: false,
-				dataType:"json",
-				type: "GET",
-				crossDomain: true,
-				cache: false,
-				url: url_extention+"get_project.php",
-				contentType: "application/json; charset=utf-8",
-				beforeSend : function() {$.mobile.loading('show')},
-				complete   : function() {$.mobile.loading('hide')},
-				success: function(data){
-					console.log(data);
-					project = data;
-					
-					jeep.webdb.open();
-					jeep.webdb.db.transaction(function(tx) {
-						tx.executeSql("DROP TABLE project", []);
-						tx.executeSql("CREATE TABLE IF NOT EXISTS project('id' INTEGER PRIMARY KEY ASC, 'admin_id' INTEGER, 'name' VARCHAR(255), 'big_logo' VARCHAR(255), 'small_logo' VARCHAR(255), 'project_logo' VARCHAR(255), 'background' VARCHAR(255), 'start_date' DATETIME, 'end_date' DATETIME, 'date_time_created' DATETIME)", []);
-					});
-					
-					
-					$.each(project, function(idx, obj) {
-						
-						jeep.webdb.db.transaction(function(tx){
-						tx.executeSql("INSERT INTO project(id, admin_id, name, big_logo, small_logo, project_logo, background, start_date, end_date, date_time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-							[obj.id, obj.admin_id, obj.name, obj.big_logo, obj.small_logo, obj.project_logo, obj.background, obj.start_date, obj.end_date, obj.date_time_created],
-							console.log("Synced Project"),
-							console.log("Project Sync Failed")
-						);
-						
-						});
-						
-					});
-					
->>>>>>> origin/master
 					jeep.webdb.getAllprojectItems(loadprojectItems);
 					jeep.webdb.getAllProjects(loadAllProjectsForUser);
 					jeep.webdb.getAllDataTypes(loadAllDataTypes);
@@ -1744,7 +1653,6 @@
 				success: function(data){
 					console.log(data);
 					data_type = data;
-<<<<<<< HEAD
 					
 					jeep.webdb.open();
 					jeep.webdb.db.transaction(function(tx) {
@@ -1753,16 +1661,6 @@
 					});
 					
 					
-=======
-					
-					jeep.webdb.open();
-					jeep.webdb.db.transaction(function(tx) {
-						tx.executeSql("DROP TABLE data_type", []);
-						tx.executeSql("CREATE TABLE IF NOT EXISTS data_type('id' INTEGER PRIMARY KEY ASC, 'data_type' VARCHAR(255))", []);
-					});
-					
-					
->>>>>>> origin/master
 					$.each(data_type, function(idx, obj) {
 						
 						jeep.webdb.db.transaction(function(tx){
@@ -2191,7 +2089,6 @@
 				alert("You are offline!\nTherefore you cannot update information");
 			}
 		}		
-<<<<<<< HEAD
 		
       }
 	  
@@ -2317,8 +2214,6 @@
 				alert("You are offline!\nTherefore you cannot get the information");
 			}
 		}		
-=======
->>>>>>> origin/master
 		
       }
 	  
@@ -2390,7 +2285,6 @@
 		}
 		
 		function getAllData(){
-<<<<<<< HEAD
 			if(navigator.onLine){
 				var confirmloadServProject = confirm("Get the projects information from the server?\nTo ensure that you get the latest projects");
 	
@@ -2464,50 +2358,3 @@
 			});
 			
 		}
-=======
-					if(navigator.onLine){
-						var confirmloadServProject = confirm("Get the projects information from the server?\nTo ensure that you get the latest projects");
-			
-						if (confirmloadServProject == true) {
-							theme = "d" || $.mobile.loader.prototype.options.theme,
-							msgText = "Downloading Information From Server This May Take A While"  || $.mobile.loader.prototype.options.text,
-							textVisible = "true" || $.mobile.loader.prototype.options.textVisible,
-							textonly = "false";
-							html = "";
-							$.mobile.loading( "show", {
-									text: msgText,
-									textVisible: textVisible,
-									theme: theme,
-									textonly: textonly,
-									html: html
-							});
-							setTimeout(function(){
-								getAllUserDataCap();
-								loadServAdmin();
-								loadServDataType();
-								loadServInputInfo();
-								loadServProjInput();
-								loadServSuperUser();
-								loadServProject();
-							},100);
-						} else {
-							if(navigator.notification){
-								navigator.notification.alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...", alertDismissed, "Download Error", "OK");
-							}
-							else{
-								alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
-							}
-						}
-				
-					
-					}
-					else{
-						if(navigator.notification){
-							navigator.notification.alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device", alertDismissed, "Offline", "OK");
-						}
-						else{
-							alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device");
-						}
-					}
-				}
->>>>>>> origin/master
