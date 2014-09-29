@@ -2346,6 +2346,7 @@
 					else{
 						alert(data);
 					}
+					$('#'+textID).val('');
 				})
 				.fail(function() {
 					if(navigator.notification){
@@ -2354,7 +2355,6 @@
 					else{
 						alert("Error Sending Email");
 					}
-				  
 			});
 			
 		}
