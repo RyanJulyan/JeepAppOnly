@@ -9,13 +9,13 @@
 	  var fieldset_id = 1;
 	  
 	  // Local Location
-      var url_extention = "include/";
+      // var url_extention = "include/";
 	  
 	  // Server Live AppOnly Location
 	  // var url_extention = "http://jeep.mi-project.info/apponly/include/";
 	  
 	  // Server Live App Location
-	  // var url_extention = "http://jeep.mi-project.info/include/";
+	   var url_extention = "http://jeep.mi-project.info/include/";
 	  
       jeep.webdb.open = function() {
 		var shortname = "myDB";
@@ -2154,12 +2154,6 @@
 					// console.log(exportDataArr);
 					
 					var pageXofY = "Page " + project_data_cap.cur_Page + " of " + project_data_cap.last_Page;
-<<<<<<< HEAD
-					$.post('include/export_data.php', {exportDataArr: exportDataArr, pageXofY: pageXofY},function (data){
-						console.log(data.substr(3));
-						var path = 'http://localhost/03 New Temp/';
-						//var path = 'http://jeep.mi-project.info//';
-=======
 					
 					$.post(url_extention+'export_data.php', {exportDataArr: exportDataArr, pageXofY: pageXofY},function (data){
 						//console.log(data.substr(3));
@@ -2169,7 +2163,6 @@
 						// Server Live App Location
 	  					var path = "http://jeep.mi-project.info/";
 						
->>>>>>> origin/master
 						$('#download_csv').attr('href', path  + data.substr(3));
 					});
 					
