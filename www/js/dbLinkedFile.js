@@ -2154,10 +2154,22 @@
 					// console.log(exportDataArr);
 					
 					var pageXofY = "Page " + project_data_cap.cur_Page + " of " + project_data_cap.last_Page;
+<<<<<<< HEAD
 					$.post('include/export_data.php', {exportDataArr: exportDataArr, pageXofY: pageXofY},function (data){
 						console.log(data.substr(3));
 						var path = 'http://localhost/03 New Temp/';
 						//var path = 'http://jeep.mi-project.info//';
+=======
+					
+					$.post(url_extention+'export_data.php', {exportDataArr: exportDataArr, pageXofY: pageXofY},function (data){
+						//console.log(data.substr(3));
+						
+						// Local Location
+						// var path = 'http://localhost/03 New Temp/';
+						// Server Live App Location
+	  					var path = "http://jeep.mi-project.info/";
+						
+>>>>>>> origin/master
 						$('#download_csv').attr('href', path  + data.substr(3));
 					});
 					
@@ -2280,48 +2292,76 @@
 		}
 		
 		function getAllData(){
-					if(navigator.onLine){
-						var confirmloadServProject = confirm("Get the projects information from the server?\nTo ensure that you get the latest projects");
-			
-						if (confirmloadServProject == true) {
-							theme = "d" || $.mobile.loader.prototype.options.theme,
-							msgText = "Downloading Information From Server This May Take A While"  || $.mobile.loader.prototype.options.text,
-							textVisible = "true" || $.mobile.loader.prototype.options.textVisible,
-							textonly = "false";
-							html = "";
-							$.mobile.loading( "show", {
-									text: msgText,
-									textVisible: textVisible,
-									theme: theme,
-									textonly: textonly,
-									html: html
-							});
-							setTimeout(function(){
-								getAllUserDataCap();
-								loadServAdmin();
-								loadServDataType();
-								loadServInputInfo();
-								loadServProjInput();
-								loadServSuperUser();
-								loadServProject();
-							},100);
-						} else {
-							if(navigator.notification){
-								navigator.notification.alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...", alertDismissed, "Download Error", "OK");
-							}
-							else{
-								alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
-							}
-						}
-				
-					
+			if(navigator.onLine){
+				var confirmloadServProject = confirm("Get the projects information from the server?\nTo ensure that you get the latest projects");
+	
+				if (confirmloadServProject == true) {
+					theme = "d" || $.mobile.loader.prototype.options.theme,
+					msgText = "Downloading Information From Server This May Take A While"  || $.mobile.loader.prototype.options.text,
+					textVisible = "true" || $.mobile.loader.prototype.options.textVisible,
+					textonly = "false";
+					html = "";
+					$.mobile.loading( "show", {
+							text: msgText,
+							textVisible: textVisible,
+							theme: theme,
+							textonly: textonly,
+							html: html
+					});
+					setTimeout(function(){
+						getAllUserDataCap();
+						loadServAdmin();
+						loadServDataType();
+						loadServInputInfo();
+						loadServProjInput();
+						loadServSuperUser();
+						loadServProject();
+					},100);
+				} else {
+					if(navigator.notification){
+						navigator.notification.alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...", alertDismissed, "Download Error", "OK");
 					}
 					else{
-						if(navigator.notification){
-							navigator.notification.alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device", alertDismissed, "Offline", "OK");
-						}
-						else{
-							alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device");
-						}
+						alert("You may not have the latest projects information loaded onto your device\nThis includes:\nAdmin Login\nProjects\nInputs\netc...");
 					}
 				}
+		
+			
+			}
+			else{
+				if(navigator.notification){
+					navigator.notification.alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device", alertDismissed, "Offline", "OK");
+				}
+				else{
+					alert("You are offline!\nTherefore you do not have the latest Projects loaded into your device");
+				}
+			}
+		}
+		
+		function sendEmail(textID){
+			var to = $("#"+textID).val();
+			var subject = $('#download_csv').html();
+			var message = $('#download_csv').attr('href');
+			
+			$.post(url_extention+'email_to.php', {to: to, subject: subject, message: message})
+				.done(function( data ) {
+					// alert( "Data Loaded: " + data );
+					
+					if(navigator.notification){
+						navigator.notification.alert(data, alertDismissed, "Email Sent", "Thanks");
+					}
+					else{
+						alert(data);
+					}
+					$('#'+textID).val('');
+				})
+				.fail(function() {
+					if(navigator.notification){
+						navigator.notification.alert("Error Sending Email" , alertDismissed, "Error Sending Email", "OK");
+					}
+					else{
+						alert("Error Sending Email");
+					}
+			});
+			
+		}
