@@ -143,14 +143,16 @@
 			}
 		});
 		
-		$(document).on("pagebeforeshow","#view_data",function(){ // When entering view_data
+		$(document).on("pageshow","#view_data",function(){ // When entering view_data
 			jeep.webdb.open();
-			jeep.webdb.getAllCapData(loadAllCapData);
+			// jeep.webdb.getAllCapData(loadAllCapData);
+			loadAllDataCapDynamic(1);
 		});
 		
 		$(document).on("pagebeforeload","#select_project_user",function(){ // When entering view_data
 			jeep.webdb.open();
 			jeep.webdb.getAllProjects(loadAllProjectsForUser);
+			$('#project_for_user').listview("refresh");
 		});
 		
 		$( document ).on( "click", ".show-page-loading-msg", function() {
@@ -168,7 +170,23 @@
 					html: html
 			});
 			setTimeout(function(){setServProject();},100);
-		})
+		});
+		
+		$( document ).on( "click", ".show-page-loading-msg-gen", function() {
+			var $this = $( this ),
+				theme = $this.jqmData( "theme" ) || $.mobile.loader.prototype.options.theme,
+				msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
+				textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+				textonly = !!$this.jqmData( "textonly" );
+				html = $this.jqmData( "html" ) || "";
+			$.mobile.loading( "show", {
+					text: msgText,
+					textVisible: textVisible,
+					theme: theme,
+					textonly: textonly,
+					html: html
+			});
+		});
 		
 	});
 	
@@ -192,7 +210,7 @@
 		<h1>
 			Jeep
 		</h1>
-        <a href="#" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="getAllUsers(); getAllUserDataCap();">Upload Data</a>
+        <a href="#" class="show-page-loading-msg-gen" data-textonly="false" data-textvisible="true" data-msgtext="" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="setTimeout(function(){getAllUsers(); getAllUserDataCap();},100)">Upload Data</a>
 	</div>
 	<div class="infoBox" data-role="main" data-theme="d">
 		<h2 class="headingStyle">Welcome</h2>
@@ -412,7 +430,6 @@
         <a href="#admin" data-icon="lock" data-iconpos="right" class="ui-btn-right log_out" style="margin-top:18px;">Logout</a>
 	</div>
     <div class="infoBox" data-role="main" data-theme="d">
-        <h2 class="headingStyle">Select Project</h2>
         <ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Search for Project" id="project_for_data">
         </ul>
     </div>
@@ -428,8 +445,8 @@
 	</div>
     <div class="infoBox" data-role="main" data-theme="d">
         <h2 class="headingStyle">Select Project</h2>
-        <ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Search for Project" id="project_for_user">
-        </ul>
+        </ul>        <ul data-role="listview" data-inset="true" data-filter="true" data-filter-placeholder="Search for Project" id="project_for_user">
+
     </div>
 </div>
 
@@ -441,11 +458,15 @@
 			Jeep
 		</h1>
 	</div>
-    <div class="infoBox" data-role="main" data-theme="d">
-       <!-- Total Submissions: <span id="totalSubs">200 People</span><br>-->
-        <button data-role="button" data-theme="d"  data-mini="true" data-icon="arrow-d" data-iconpos="right" data-inline="true" >Download CSV</button><br>
-    <table data-filter="true" data-filter-placeholder="Search for Infomation" id='render_data' border="1" >
-    </table>
+    <div data-role="main" class="infoBox ui-content" data-theme="d">
+    	<a href="#" id="download_csv" target="_blank" data-role="button" data-theme="d" data-mini="true" data-icon="arrow-d" data-iconpos="right" data-inline="true" >Download CSV</a><br>
+        Total Submissions: Estimated <span id="totalSubs">200</span> People<br>
+        <div style="width:100%;" id="cur_page_out_of"></div>
+        <div id="render_data">
+        <table style="width:100%; margin:auto;" >
+        <tr><td>LOADING...</td></tr>
+        </table>
+        </div>
     </div>
 </div>
 
@@ -472,7 +493,7 @@
 		<h1>
 			Jeep
 		</h1>
-        <a href="#" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="getAllUsers(); getAllUserDataCap();">Upload Data</a>
+        <a href="#" class="show-page-loading-msg-gen" data-textonly="false" data-textvisible="true" data-msgtext="" data-icon="cloud" style="margin-top:18px;" id="user_upload_data" data-iconpos="right" onClick="setTimeout(function(){getAllUsers(); getAllUserDataCap();},100)">Upload Data</a>
 	</div>
     <div class="infoBox" data-role="main" data-theme="d">
         <img id="project_cap_img" src="img/proj_img.png" />
