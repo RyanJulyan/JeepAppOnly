@@ -9,13 +9,16 @@
 	  var fieldset_id = 1;
 	  
 	  // Local Location
-      // var url_extention = "include/";
+      var url_extention = "include/";
 	  
 	  // Server Live AppOnly Location
 	  // var url_extention = "http://jeep.mi-project.info/apponly/include/";
 	  
-	  // Server Live App Location
-	   var url_extention = "http://jeep.mi-project.info/include/";
+	  // Jeep Server Live App Location
+	  // var url_extention = "http://jeep.mi-project.info/include/";
+	   
+	  // Alfa Server Live App Location
+	  // var url_extention = "http://alfaremeo.mi-project.info/include/";
 	  
       jeep.webdb.open = function() {
 		var shortname = "myDB";
@@ -1182,7 +1185,11 @@
 					else{
 						alert("Uploaded to Server");
 					}
-					$.mobile.changePage( "#link_input_to_proj", { transition: "flow", changeHash: false });
+					//Original App Change to next page
+					//$.mobile.changePage( "#link_input_to_proj", { transition: "flow", changeHash: false });
+					
+					// Simplify Change
+					// $.mobile.changePage( "#start", { transition: "flow", changeHash: false });
 				},
 				error:function(xhr){
 					$.mobile.loading( "hide" );
