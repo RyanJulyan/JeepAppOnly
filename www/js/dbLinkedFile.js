@@ -9,7 +9,7 @@
 	  var fieldset_id = 1;
 	  
 	  // Local Location
-      var url_extention = "include/";
+      // var url_extention = "include/";
 	  
 	  // Server Live AppOnly Location
 	  // var url_extention = "http://jeep.mi-project.info/apponly/include/";
@@ -19,6 +19,9 @@
 	   
 	  // Alfa Server Live App Location
 	  // var url_extention = "http://alfaremeo.mi-project.info/include/";
+	  
+	  // New IX Server Live App Location
+	  var url_extention = "http://chryslermobileapp.com/include/";
 	  
       jeep.webdb.open = function() {
 		var shortname = "myDB";
