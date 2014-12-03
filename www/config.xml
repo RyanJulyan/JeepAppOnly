@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
-        id        = "info.mi-project.jeepdev"
+        id        = "com.chryslermobileapp.cdc"
         version   = "3.2.0">
     <name>Jeep mi-project info</name>
 
@@ -23,7 +23,7 @@
 		<param name="android-package" value="org.apache.cordova.vibration.Vibration" />
 	</feature>
 
-    <preference name="phonegap-version" value="3.6.3" />
+    <preference name="phonegap-version" value="3.3.0" />
     <preference name="orientation"      value="default" />
     <preference name="target-device"    value="universal" />
     <preference name="fullscreen"       value="false" />
@@ -57,5 +57,5 @@
     <gap:splash src="res/screen/ios/screen-ipad-landscape.png"     gap:platform="ios"     width="1024" height="768" />
     <gap:splash src="res/screen/windows-phone/screen-portrait.jpg" gap:platform="winphone" />
 	<access origin="*" />
-	<access origin="http://jeep.mi-project.info/include/" />
+	<access origin="http://chryslermobileapp.com/cdc/include/" />
 </widget>
