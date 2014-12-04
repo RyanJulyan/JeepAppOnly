@@ -243,7 +243,7 @@ function addCampain(){
 		StartOn = StartOn.val(), 
 		EndOn = EndOn.val();
 		
-		$.get( "http://chryslermobileapp.com/cdc/include//set_campaign.php", {campaign_name:CampaignName, dealership:Dealership, logo_src:LogoSrc, starton:StartOn, endon:EndOn})
+		$.get( "http://chryslermobileapp.com/cdc/include/set_campaign.php", {campaign_name:CampaignName, dealership:Dealership, logo_src:LogoSrc, starton:StartOn, endon:EndOn})
 			.done(function( data ) {
 				var data = data;
 				console.log(data.status);
@@ -277,7 +277,7 @@ function syncData(){
 }
 
 function sendInfo(arrIndex, campID, title, Name, Surname, Email, Telnumber, IDnumber, Vehicle, opt){
-	$.get( "http://chryslermobileapp.com/cdc/include//set_campaign_info.php", {campaign_id:campID,promoter_id:"1", admin_id:"1", title:title, name:Name, surname:Surname, email:Email, telnumber:Telnumber, idnumber:IDnumber, vehicle:Vehicle, optin:opt, capturedlatlong:"Unknown"})
+	$.get( "http://chryslermobileapp.com/cdc/include/set_campaign_info.php", {campaign_id:campID,promoter_id:"1", admin_id:"1", title:title, name:Name, surname:Surname, email:Email, telnumber:Telnumber, idnumber:IDnumber, vehicle:Vehicle, optin:opt, capturedlatlong:"Unknown"})
 		.done(function( data ) {
 			console.log({campaign_id:campID,promoter_id:"1", admin_id:"1", title:title, name:Name, surname:Surname, email:Email, telnumber:Telnumber, idnumber:IDnumber, vehicle:Vehicle, optin:opt, capturedlatlong:"Unknown"});
 			console.log(data);
@@ -449,7 +449,7 @@ function loadCampainInfoList(campaign_id, campaign_name){
 		}
 		$('#campainInfoListLocal').html('').append(localTemplate);
 	}
-	$.get( "http://chryslermobileapp.com/cdc/include//get_campaign_info.php", { campaign_id: campaign_id } )
+	$.get( "http://chryslermobileapp.com/cdc/include/get_campaign_info.php", { campaign_id: campaign_id } )
 		.done(function( data ) {
 			console.log(data);
 			var template = '';
@@ -471,7 +471,7 @@ function loadCampainInfoList(campaign_id, campaign_name){
 }
 
 function getAllCampaigns(){
-	$.get( "http://chryslermobileapp.com/cdc/include//get_all_campaigns.php")
+	$.get( "http://chryslermobileapp.com/cdc/include/get_all_campaigns.php")
 		.done(function( data ) {
 			var template = '';
 			for(var i in data){
